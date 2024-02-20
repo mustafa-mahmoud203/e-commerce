@@ -11,14 +11,15 @@ const categorySchema = new Schema(
       minlength: 3,
       maxlength: 32,
     },
-    slog: {
+    slug: {
       type: String,
       lowercase: true,
     },
+    image: String,
   },
   { timestamps: true }
 );
 
-const categoryModel = model(Category, categorySchema);
+const categoryModel = model("Category", categorySchema);
 
 export default categoryModel;
