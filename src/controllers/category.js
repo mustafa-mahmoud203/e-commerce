@@ -24,10 +24,35 @@ export const getCategorys = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const SpecifiCategory = asyncHandler(async (req, res, next) => {
+export const specifiCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const category = await categoryModel.findById(id);
   if (!category) return next(new Error("Category not found", { state: 404 }));
 
   return res.status(200).json({ message: "Done", data: category });
+});
+
+export const updateCategory = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  const category = await categoryModel.findByIdAndUpdate(
+    id,
+    { name },
+    { new: true }
+  );
+  // when use findByIdAndUpdate
+  if (!category) return next(new Error("Category not found", { state: 404 }));
+
+  // when use updateone
+  //   if (!category.modifiedCount)return next(new Error("Category not found", { state: 404 }));
+
+  return res.status(200).json({ message: "Done", data: category });
+});
+
+export const deleteCategory = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const category = await categoryModel.findByIdAndDelete(id);
+  if (!category) return next(new Error("Category not found", { state: 404 }));
+
+  return res.status(200).json({ message: "Done" });
 });
