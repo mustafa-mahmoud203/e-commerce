@@ -1,6 +1,7 @@
 import slugify from "slugify";
 import categoryModel from "../../dataBase/models/category.model.js";
 import asyncHandler from "express-async-handler";
+import ApiError from "../utils/apiError.js";
 
 export const createCategory = asyncHandler(async (req, res, next) => {
   const { name } = req.body;
@@ -27,7 +28,7 @@ export const getCategorys = asyncHandler(async (req, res, next) => {
 export const specifiCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const category = await categoryModel.findById(id);
-  if (!category) return next(new Error("Category not found", { state: 404 }));
+  if (!category) return next(new ApiError("Category not found", 404));
 
   return res.status(200).json({ message: "Done", data: category });
 });
@@ -41,10 +42,10 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
     { new: true }
   );
   // when use findByIdAndUpdate
-  if (!category) return next(new Error("Category not found", { state: 404 }));
+  if (!category) return next(new ApiError("Category not found", 404));
 
   // when use updateone
-  //   if (!category.modifiedCount)return next(new Error("Category not found", { state: 404 }));
+  //   if (!category.modifiedCount)return next(new Error("Category not found", { statusCode: 404 }));
 
   return res.status(200).json({ message: "Done", data: category });
 });
@@ -52,7 +53,7 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
 export const deleteCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const category = await categoryModel.findByIdAndDelete(id);
-  if (!category) return next(new Error("Category not found", { state: 404 }));
+  if (!category) return next(new ApiError("Category not found", 404));
 
   return res.status(200).json({ message: "Done" });
 });
