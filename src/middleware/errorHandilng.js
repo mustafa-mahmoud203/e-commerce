@@ -6,7 +6,7 @@ export const globalError = (err, req, res, next) => {
 };
 
 const errorForDev = (err, res) => {
-  return res.status(err.statusCode || 500).json({
+  return res.status(err.statusCode).json({
     status: err.statusCode,
     Error: err,
     message: err.message,
@@ -14,7 +14,7 @@ const errorForDev = (err, res) => {
   });
 };
 const errorForProd = (err, res) => {
-  return res.status(err.statusCode || 500).json({
+  return res.status(err.statusCode).json({
     status: err.statusCode,
     message: err.message,
   });
