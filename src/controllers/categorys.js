@@ -1,6 +1,6 @@
 import slugify from "slugify";
-import categoryModel from "../../dataBase/models/category.model.js";
 import asyncHandler from "express-async-handler";
+import categoryModel from "../../dataBase/models/category.model.js";
 import ApiError from "../utils/apiError.js";
 
 export const createCategory = asyncHandler(async (req, res, next) => {

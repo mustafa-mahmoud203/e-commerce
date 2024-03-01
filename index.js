@@ -4,6 +4,8 @@ import "dotenv/config";
 import connectDB from "./dataBase/connection.js";
 import { globalError } from "./src/middleware/errorHandilng.js";
 import categoryRouter from "./src/routes/category.route.js";
+import subCategoryRouter from "./src/routes/subCategory.route.js";
+
 import ApiError from "./src/utils/apiError.js";
 
 const app = express();
@@ -13,6 +15,7 @@ connectDB();
 app.use(express.json());
 
 app.use("/category", categoryRouter);
+app.use("/subCategory", subCategoryRouter);
 app.use("*", (res, req, next) => {
   return next(new ApiError("404 Page Not Found", 404));
 });

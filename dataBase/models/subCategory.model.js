@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const supCategorySchema = new Schema(
+const subCategorySchema = new Schema(
   {
     name: {
       type: String,
@@ -23,6 +23,6 @@ const supCategorySchema = new Schema(
   { timestamps: true }
 );
 
-const supCategoryModel = model("SupCategory", supCategorySchema);
+const subCategoryModel = model("SupCategory", subCategorySchema);
 
-export default supCategoryModel;
+export default subCategoryModel;
