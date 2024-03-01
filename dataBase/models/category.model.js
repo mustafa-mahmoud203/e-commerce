@@ -6,6 +6,7 @@ const categorySchema = new Schema(
   {
     name: {
       type: String,
+      trim: true,
       require: true,
       unique: true,
       minlength: 3,
