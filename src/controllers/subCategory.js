@@ -51,3 +51,11 @@ export const updateSubCategory = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json({ message: "Done", data: subCategory });
 });
+
+export const deleteSubCategory = asyncHandler(async (req, res, next) => {
+  const { subCategoryId } = req.params;
+  const subCategory = await subCategoryModel.findByIdAndDelete(subCategoryId);
+  if (!subCategory) return next(new ApiError("subCategory not found", 404));
+
+  return res.status(200).json({ message: "Done" });
+});
