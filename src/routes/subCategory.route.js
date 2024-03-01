@@ -12,6 +12,7 @@ router
 
 router
   .route("/:subCategoryId")
-  .get(validators.getSubCategory, controllers.getSubCategory);
+  .get(validators.getSubCategory, controllers.getSubCategory)
+  .put(validators.updateSubCategory, controllers.updateSubCategory);
 
 export default router;
