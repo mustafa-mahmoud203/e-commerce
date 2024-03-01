@@ -1,10 +1,10 @@
 import { check } from "express-validator";
 import validationMiddleware from "../middleware/validation.js";
 
-// export const getCategory = [
-//   check("id").isMongoId().withMessage("invalid category Id"),
-//   validationMiddleware,
-// ];
+export const getSubCategory = [
+  check("subCategoryId").isMongoId().withMessage("invalid category Id"),
+  validationMiddleware,
+];
 
 // export const deleteCategory = [
 //   check("id").isMongoId().withMessage("invalid category Id"),
