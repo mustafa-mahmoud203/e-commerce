@@ -4,9 +4,14 @@ import * as validators from "../validators/category.js";
 
 const router = Router();
 
-router.post("/", controllers.createCategory);
-router.get("/", controllers.getCategories);
-router.get("/:id", validators.getCategory, controllers.getCategory);
-router.patch("/:id", validators.updateCategory, controllers.updateCategory);
-router.delete("/:id", validators.deleteCategory, controllers.deleteCategory);
+router
+  .route("/")
+  .post(controllers.createCategory)
+  .get(controllers.getCategories);
+
+router
+  .route("/:id")
+  .get(validators.getCategory, controllers.getCategory)
+  .patch(validators.updateCategory, controllers.updateCategory)
+  .delete(validators.deleteCategory, controllers.deleteCategory);
 export default router;
