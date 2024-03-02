@@ -28,8 +28,8 @@ export const getCategories = asyncHandler(async (req, res, next) => {
 });
 
 export const getCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const category = await categoryModel.findById(id);
+  const { categoryId } = req.params;
+  const category = await categoryModel.findById(categoryId);
   if (!category) return next(new ApiError("Category not found", 404));
 
   return res
@@ -38,10 +38,10 @@ export const getCategory = asyncHandler(async (req, res, next) => {
 });
 
 export const updateCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+  const { categoryId } = req.params;
   const { name } = req.body;
   const category = await categoryModel.findByIdAndUpdate(
-    id,
+    categoryId,
     { name },
     { new: true }
   );
@@ -57,8 +57,8 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const category = await categoryModel.findByIdAndDelete(id);
+  const { categoryId } = req.params;
+  const category = await categoryModel.findByIdAndDelete(categoryId);
   if (!category) return next(new ApiError("Category not found", 404));
 
   return res.status(200).json({ message: "Done" });

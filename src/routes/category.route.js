@@ -13,7 +13,7 @@ router
   .get(controllers.getCategories);
 
 router
-  .route("/:id")
+  .route("/:categoryId")
   .get(validators.getCategory, controllers.getCategory)
   .patch(validators.updateCategory, controllers.updateCategory)
   .delete(validators.deleteCategory, controllers.deleteCategory);

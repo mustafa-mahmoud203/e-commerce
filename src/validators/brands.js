@@ -1,18 +1,18 @@
 import { check } from "express-validator";
 import validationMiddleware from "../middleware/validation.js";
 
-export const getCategory = [
-  check("categoryId").isMongoId().withMessage("invalid category Id"),
+export const getBrand = [
+  check("brandId").isMongoId().withMessage("invalid Brand Id"),
   validationMiddleware,
 ];
 
-export const deleteCategory = [
-  check("categoryId").isMongoId().withMessage("invalid category Id"),
+export const deleteBrand = [
+  check("brandId").isMongoId().withMessage("invalid Brand Id"),
   validationMiddleware,
 ];
 
-export const updateCategory = [
-  check("categoryId").isMongoId().withMessage("invalid category Id"),
+export const updateBrand = [
+  check("brandId").isMongoId().withMessage("invalid Brand Id"),
   check("name")
     .notEmpty()
     .withMessage("name is required")
@@ -24,7 +24,7 @@ export const updateCategory = [
   validationMiddleware,
 ];
 
-export const createCategory = [
+export const createBrand = [
   check("name")
     .notEmpty()
     .withMessage("name is required")
@@ -35,3 +35,4 @@ export const createCategory = [
 
   validationMiddleware,
 ];
+
