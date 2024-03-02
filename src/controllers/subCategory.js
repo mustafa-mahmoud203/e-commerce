@@ -16,7 +16,9 @@ export const createSubCategory = asyncHandler(async (req, res, next) => {
     slug: slugify(name),
     category: categoryId,
   });
-  return res.status(201).json({ message: "Done", subCategory });
+  return res
+    .status(201)
+    .json({ message: "Done", results: subCategory.length, subCategory });
 });
 
 export const getSubCategories = asyncHandler(async (req, res, next) => {
@@ -27,20 +29,26 @@ export const getSubCategories = asyncHandler(async (req, res, next) => {
 
   if (req.params.categoryId)
     filterObeject = { category: req.params.categoryId };
-  
-    const subCategories = await subCategoryModel
+
+  const subCategories = await subCategoryModel
     .find(filterObeject)
     .skip(skip)
     .limit(limit);
   if (!subCategories) return next(new ApiError("SubCategory not found", 404));
-  return res.status(200).json({ message: "Done", data: subCategories });
+  return res.status(200).json({
+    message: "Done",
+    results: subCategories.length,
+    data: subCategories,
+  });
 });
 
 export const getSubCategory = asyncHandler(async (req, res, next) => {
   const { subCategoryId } = req.params;
   const subCategory = await subCategoryModel.findById(subCategoryId);
   if (!subCategory) return next(new ApiError("SubCategory not found", 404));
-  return res.status(200).json({ message: "Done", data: subCategory });
+  return res
+    .status(200)
+    .json({ message: "Done", results: subCategory.length, data: subCategory });
 });
 
 export const updateSubCategory = asyncHandler(async (req, res, next) => {
@@ -57,7 +65,9 @@ export const updateSubCategory = asyncHandler(async (req, res, next) => {
   );
   if (!subCategory) return next(new ApiError("subCategory not found", 404));
 
-  return res.status(200).json({ message: "Done", data: subCategory });
+  return res
+    .status(200)
+    .json({ message: "Done", results: subCategory.length, data: subCategory });
 });
 
 export const deleteSubCategory = asyncHandler(async (req, res, next) => {
