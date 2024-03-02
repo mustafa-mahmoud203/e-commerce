@@ -28,15 +28,15 @@ export const createProduct = [
   check("title")
     .notEmpty()
     .withMessage("title is required")
-    .isLength({ min: 3 })
-    .withMessage("title must be more than 2 letters")
+    .isLength({ min: 2 })
+    .withMessage("title must be more than 1 letters")
     .isLength({ max: 100 })
     .withMessage("title must at most 100 chars"),
 
   check("description")
     .notEmpty()
     .withMessage("Product description is required")
-    .isLength({ max: 10000 })
+    .isLength({ max: 20000 })
     .withMessage("Too long description"),
 
   check("quantity")

@@ -9,7 +9,7 @@ router.use("/:categoryId/subCategories", subCategoryRouter);
 
 router
   .route("/")
-  .post(controllers.createCategory)
+  .post(validators.createCategory, controllers.createCategory)
   .get(controllers.getCategories);
 
 router

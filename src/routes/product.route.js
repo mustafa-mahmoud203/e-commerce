@@ -4,7 +4,10 @@ import * as validators from "../validators/product.js";
 
 const router = Router();
 
-router.route("/").post(controllers.createProduct).get(controllers.getProducts);
+router
+  .route("/")
+  .post(validators.createProduct, controllers.createProduct)
+  .get(controllers.getProducts);
 
 router
   .route("/:productId")
