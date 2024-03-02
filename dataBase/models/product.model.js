@@ -17,7 +17,7 @@ const productSchema = new Schema(
     description: {
       type: String,
       required: true,
-      minlength: 20,
+      minlength: 10000,
     },
     quantity: {
       type: Number,
