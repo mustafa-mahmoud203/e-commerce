@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as controllers from "../controllers/subCategory.js";
 import * as validators from "../validators/subCategory.js";
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
 router.route("/").get(controllers.getSubCategories);
 

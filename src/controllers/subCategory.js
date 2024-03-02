@@ -23,7 +23,15 @@ export const getSubCategories = asyncHandler(async (req, res, next) => {
   const page = req.query.page * 1 || 1;
   const limit = 10;
   const skip = (page - 1) * limit;
-  const subCategories = await subCategoryModel.find({}).skip(skip).limit(limit);
+  let filterObeject = {};
+
+  if (req.params.categoryId)
+    filterObeject = { category: req.params.categoryId };
+  
+    const subCategories = await subCategoryModel
+    .find(filterObeject)
+    .skip(skip)
+    .limit(limit);
   if (!subCategories) return next(new ApiError("SubCategory not found", 404));
   return res.status(200).json({ message: "Done", data: subCategories });
 });

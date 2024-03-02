@@ -14,8 +14,8 @@ const port = process.env.PORT || 3001;
 connectDB();
 app.use(express.json());
 
-app.use("/category", categoryRouter);
-app.use("/subCategory", subCategoryRouter);
+app.use("/categories", categoryRouter);
+app.use("/subCategories", subCategoryRouter);
 app.use("*", (res, req, next) => {
   return next(new ApiError("404 Page Not Found", 404));
 });
