@@ -12,7 +12,7 @@ router
 router
   .route("/:productId")
   .get(validators.getProduct, controllers.getProduct)
-  .patch(validators.updateProduct, controllers.updateProduct)
+  .put(validators.updateProduct, controllers.updateProduct)
   .delete(validators.deleteProduct, controllers.deleteProduct);
 
 export default router;

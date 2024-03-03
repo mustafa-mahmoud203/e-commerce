@@ -1,5 +1,6 @@
 import { check } from "express-validator";
 import validationMiddleware from "../middleware/validation.js";
+import categoryModel from "../../dataBase/models/category.model.js";
 
 export const getSubCategory = [
   check("subCategoryId").isMongoId().withMessage("invalid SubCategory Id"),
@@ -25,7 +26,13 @@ export const updateSubCategory = [
     .notEmpty()
     .withMessage("subCategory must be belong Category")
     .isMongoId()
-    .withMessage("invalid category Id"),
+    .withMessage("invalid category Id")
+    .custom(async (categoryID) => {
+      const category = await categoryModel.findById(categoryID);
+      if (!category) {
+        throw new Error("Category not found");
+      }
+    }),
 
   validationMiddleware,
 ];
@@ -43,6 +50,12 @@ export const createSubCategory = [
     .notEmpty()
     .withMessage("subCategory must be belong Category")
     .isMongoId()
-    .withMessage("invalid category Id"),
+    .withMessage("invalid category Id")
+    .custom(async (categoryID) => {
+      const category = await categoryModel.findById(categoryID);
+      if (!category) {
+        throw new Error("Category not found");
+      }
+    }),
   validationMiddleware,
 ];

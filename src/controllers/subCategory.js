@@ -55,8 +55,9 @@ export const updateSubCategory = asyncHandler(async (req, res, next) => {
   const { subCategoryId } = req.params;
   const { name, category } = req.body;
 
-  const category_ = await categoryModel.findById(category);
-  if (!category_) return next(new ApiError("Category not found", 404));
+  //validate for category
+  // const category_ = await categoryModel.findById(category);
+  // if (!category_) return next(new ApiError("Category not found", 404));
 
   const subCategory = await subCategoryModel.findByIdAndUpdate(
     subCategoryId,

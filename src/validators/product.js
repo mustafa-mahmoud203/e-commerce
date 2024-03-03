@@ -1,5 +1,6 @@
 import { check } from "express-validator";
 import validationMiddleware from "../middleware/validation.js";
+import categoryModel from "../../dataBase/models/category.model.js";
 
 export const getProduct = [
   check("productId").isMongoId().withMessage("invalid Product Id"),
@@ -13,14 +14,15 @@ export const deleteProduct = [
 
 export const updateProduct = [
   check("productId").isMongoId().withMessage("invalid Product Id"),
-  check("name")
+  check("category")
     .notEmpty()
-    .withMessage("name is required")
-    .isLength({ min: 3 })
-    .withMessage("name must be more than 2 letters")
-    .isLength({ max: 32 })
-    .withMessage("name must be less than 33 letters"),
-
+    .withMessage("Product must be belong to a category")
+    .isMongoId()
+    .withMessage("Invalid ID formate")
+    .custom(async (categoryID) => {
+      const category = await categoryModel.findById(categoryID);
+      if (!category) throw new Error("Category not found");
+    }),
   validationMiddleware,
 ];
 
@@ -87,7 +89,11 @@ export const createProduct = [
     .notEmpty()
     .withMessage("Product must be belong to a category")
     .isMongoId()
-    .withMessage("Invalid ID formate"),
+    .withMessage("Invalid ID formate")
+    .custom(async (categoryID) => {
+      const category = await categoryModel.findById(categoryID);
+      if (!category) throw new Error("Category not found");
+    }),
 
   check("subcategories")
     .optional()

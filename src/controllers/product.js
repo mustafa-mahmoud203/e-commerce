@@ -8,8 +8,9 @@ export const createProduct = asyncHandler(async (req, res, next) => {
   const data = req.body;
   data.slug = slugify(data.title);
 
-  const category = await categoryModel.findById(data.category);
-  if (!category) return next(new ApiError("Category not found", 404));
+  //validate for category
+  // const category = await categoryModel.findById(data.category);
+  // if (!category) return next(new ApiError("Category not found", 404));
 
   const product = await productModel.create(data);
 
@@ -38,7 +39,9 @@ export const getProducts = asyncHandler(async (req, res, next) => {
 
 export const getProduct = asyncHandler(async (req, res, next) => {
   const { productId } = req.params;
-  const product = await productModel.findById(productId);
+  const product = await productModel
+    .findById(productId)
+    .populate({ path: "category", select: "name " });
   if (!product) return next(new ApiError("product not found", 404));
 
   return res
