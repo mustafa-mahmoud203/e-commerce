@@ -1,6 +1,7 @@
 import { check } from "express-validator";
 import validationMiddleware from "../middleware/validation.js";
 import categoryModel from "../../dataBase/models/category.model.js";
+import subCategoryModel from "../../dataBase/models/subCategory.model.js";
 
 export const getProduct = [
   check("productId").isMongoId().withMessage("invalid Product Id"),
@@ -14,6 +15,7 @@ export const deleteProduct = [
 
 export const updateProduct = [
   check("productId").isMongoId().withMessage("invalid Product Id"),
+
   check("category")
     .notEmpty()
     .withMessage("Product must be belong to a category")
@@ -22,6 +24,18 @@ export const updateProduct = [
     .custom(async (categoryID) => {
       const category = await categoryModel.findById(categoryID);
       if (!category) throw new Error("Category not found");
+    }),
+
+  check("subCategories")
+    .optional()
+    .isMongoId()
+    .withMessage("Invalid ID formate")
+    .custom(async (subCategoriesIDs) => {
+      const result = await subCategoryModel.find({
+        _id: { $in: subCategoriesIDs },
+      });
+      if (result.length != subCategoriesIDs.length || result.length < 1)
+        throw new Error("invalid subcategories IDs");
     }),
   validationMiddleware,
 ];
@@ -95,10 +109,31 @@ export const createProduct = [
       if (!category) throw new Error("Category not found");
     }),
 
-  check("subcategories")
+  check("subCategories")
     .optional()
     .isMongoId()
-    .withMessage("Invalid ID formate"),
+    .withMessage("Invalid ID formate")
+    .custom(async (subCategoriesIDs) => {
+      const result = await subCategoryModel.find({
+        _id: { $in: subCategoriesIDs },
+      });
+      if (result.length != subCategoriesIDs.length || result.length < 1)
+        throw new Error("invalid subcategories IDs");
+    })
+    .custom(async (value, { req }) => {
+      const subCateIDs = [];
+      const subCategoriesForSpecificCategory = await subCategoryModel.find({
+        category: req.body.category,
+      });
+      subCategoriesForSpecificCategory.forEach((subCategory) => {
+        subCateIDs.push(subCategory._id.toString());
+      });
+      const checkIDs = (target, arr) => target.every((id) => arr.includes(id));
+      if (!checkIDs(value, subCateIDs))
+        throw new Error(
+          `subcategories not belong to this category ${req.body.category}`
+        );
+    }),
 
   check("brand").optional().isMongoId().withMessage("Invalid ID formate"),
 
