@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const productSchema = new Schema(
   {
@@ -6,7 +6,7 @@ const productSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      minlength: 3,
+      minlength: 2,
       maxlength: 100,
     },
     slug: {
@@ -17,7 +17,7 @@ const productSchema = new Schema(
     description: {
       type: String,
       required: true,
-      minlength: 20,
+      maxlength: 20000,
     },
     quantity: {
       type: Number,
@@ -46,7 +46,7 @@ const productSchema = new Schema(
     category: {
       type: Schema.ObjectId,
       ref: "Category",
-      required: [true, "Product must be belong to category"],
+      required: true,
     },
     subCategories: [
       {

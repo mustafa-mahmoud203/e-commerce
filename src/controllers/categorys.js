@@ -15,7 +15,7 @@ export const createCategory = asyncHandler(async (req, res, next) => {
 
 export const getCategories = asyncHandler(async (req, res, next) => {
   // *1  convert to int
-  const page = req.query.page * 1 || 2;
+  const page = req.query.page * 1 || 1;
   const limit = 5;
   const skip = (page - 1) * limit;
   const categories = await categoryModel.find({}).skip(skip).limit(limit);
