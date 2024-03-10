@@ -122,11 +122,11 @@ export const createProduct = [
     })
     .custom(async (value, { req }) => {
       const subCateIDs = [];
-      const subCategoriesForSpecificCategory = await subCategoryModel.find({
+      const subCategories = await subCategoryModel.find({
         category: req.body.category,
       });
-      subCategoriesForSpecificCategory.forEach((subCategory) => {
-        subCateIDs.push(subCategory._id.toString());
+      subCategories.forEach((val) => {
+        subCateIDs.push(val._id.toString());
       });
       const checkIDs = (target, arr) => target.every((id) => arr.includes(id));
       if (!checkIDs(value, subCateIDs))

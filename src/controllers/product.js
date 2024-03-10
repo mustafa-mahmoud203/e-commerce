@@ -20,12 +20,23 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const getProducts = asyncHandler(async (req, res, next) => {
+  //filtering
+  const excludesFields = ["page", "limit", "sort", "fields"];
+  const filteringObj = { ...req.query };
+  excludesFields.forEach((item) => delete filteringObj[item]);
+
+  let filteringQuery = JSON.stringify(filteringObj);
+  const regex = /\b(gt|gte|lt|lte|in)\b/g;
+  filteringQuery = filteringQuery.replace(regex, (val) => `$${val}`); //  //(val) => "$"+val`
+  filteringQuery = JSON.parse(filteringQuery);
+
+  //pagination
   // *1  convert to int
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 5;
+  const limit = req.query.limit * 1 || 25;
   const skip = (page - 1) * limit;
   const Products = await productModel
-    .find({})
+    .find(filteringQuery)
     .skip(skip)
     .limit(limit)
     .populate({ path: "category", select: "name " });
