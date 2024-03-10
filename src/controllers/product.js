@@ -35,11 +35,22 @@ export const getProducts = asyncHandler(async (req, res, next) => {
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 25;
   const skip = (page - 1) * limit;
-  const Products = await productModel
+  let ProductsQuery = productModel
     .find(filteringQuery)
     .skip(skip)
     .limit(limit)
     .populate({ path: "category", select: "name " });
+
+  // Sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    ProductsQuery = ProductsQuery.sort(sortBy);
+  }
+  else{
+    ProductsQuery = ProductsQuery.sort("createdAt");
+  }
+
+  const Products = await ProductsQuery;
   return res.status(200).json({
     message: "Done",
     results: Products.length,
