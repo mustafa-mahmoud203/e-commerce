@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 import productModel from "../../dataBase/models/product.model.js";
 import ApiError from "../utils/apiError.js";
 import categoryModel from "../../dataBase/models/category.model.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
   const data = req.body;
@@ -20,49 +21,18 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const getProducts = asyncHandler(async (req, res, next) => {
-  //filtering
-  const excludesFields = ["page", "limit", "sort", "fields"];
-  const filteringObj = { ...req.query };
-  excludesFields.forEach((item) => delete filteringObj[item]);
+  const apiFeatures = new ApiFeatures(productModel, req)
+    .paginate()
+    .filter()
+    .fields()
+    .sort();
 
-  let filteringQuery = JSON.stringify(filteringObj);
-  const regex = /\b(gt|gte|lt|lte|in)\b/g;
-  filteringQuery = filteringQuery.replace(regex, (val) => `$${val}`); //  //(val) => "$"+val`
-  filteringQuery = JSON.parse(filteringQuery);
-
-  //pagination
-  // *1  convert to int
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 25;
-  const skip = (page - 1) * limit;
-  let ProductsQuery = productModel
-    .find(filteringQuery)
-    .skip(skip)
-    .limit(limit)
-    .populate({ path: "category", select: "name" });
-
-  // Sorting
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(",").join(" ");
-    ProductsQuery = ProductsQuery.sort(sortBy);
-  } else {
-    ProductsQuery = ProductsQuery.sort("createdAt");
-  }
-
-  //select some fields
-  if (req.query.fields) {
-    const fieldsSelected = req.query.fields.split(",").join(" ");
-    ProductsQuery = ProductsQuery.select(fieldsSelected);
-  }else {
-    ProductsQuery = ProductsQuery.select("-__v");
-
-  }
-
-  const Products = await ProductsQuery;
+  // let ProductsQuery = productModel.find(filteringQuery).populate({ path: "category", select: "name" });
+  const Products = await apiFeatures.modelQuery;
   return res.status(200).json({
     message: "Done",
     results: Products.length,
-    page,
+    // page: apiFeatures.req.query.page,
     data: Products,
   });
 });
