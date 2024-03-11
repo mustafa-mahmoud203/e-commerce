@@ -39,15 +39,23 @@ export const getProducts = asyncHandler(async (req, res, next) => {
     .find(filteringQuery)
     .skip(skip)
     .limit(limit)
-    .populate({ path: "category", select: "name " });
+    .populate({ path: "category", select: "name" });
 
   // Sorting
   if (req.query.sort) {
     const sortBy = req.query.sort.split(",").join(" ");
     ProductsQuery = ProductsQuery.sort(sortBy);
-  }
-  else{
+  } else {
     ProductsQuery = ProductsQuery.sort("createdAt");
+  }
+
+  //select some fields
+  if (req.query.fields) {
+    const fieldsSelected = req.query.fields.split(",").join(" ");
+    ProductsQuery = ProductsQuery.select(fieldsSelected);
+  }else {
+    ProductsQuery = ProductsQuery.select("-__v");
+
   }
 
   const Products = await ProductsQuery;
