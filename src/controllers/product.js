@@ -25,7 +25,8 @@ export const getProducts = asyncHandler(async (req, res, next) => {
     .paginate()
     .filter()
     .fields()
-    .sort();
+    .sort()
+    .search();
 
   // let ProductsQuery = productModel.find(filteringQuery).populate({ path: "category", select: "name" });
   const Products = await apiFeatures.modelQuery;

@@ -18,14 +18,17 @@ class ApiFeatures {
 
     return this;
   }
-  paginate() {
+  paginate(filterObeject = {}) {
     const limit = this.req.query.limit * 1 || 25;
     const page = this.req.query.page * 1 || 1;
     const skip = (page - 1) * limit;
-    this.modelQuery = this.modelQuery.find({}).skip(skip).limit(limit);
+    this.modelQuery = this.modelQuery
+      .find(filterObeject)
+      .skip(skip)
+      .limit(limit);
     return this;
   }
-
+  // TODO not worked
   sort() {
     if (this.req.query.sort) {
       const sortBy = this.req.query.sort.split(",").join(" ");
@@ -46,7 +49,6 @@ class ApiFeatures {
     return this;
   }
 
-  // TODO not worked 
   search() {
     if (this.req.query.keyword) {
       const { keyword } = this.req.query;
@@ -54,12 +56,14 @@ class ApiFeatures {
       searchQuery.$or = [
         {
           title: { $regex: keyword, $options: "i" },
+        },
+        {
           description: { $regex: keyword, $options: "i" },
         },
       ];
       this.modelQuery = this.modelQuery.find(searchQuery);
     }
+    return this;
   }
 }
-
 export default ApiFeatures;

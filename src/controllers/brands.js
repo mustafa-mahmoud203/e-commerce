@@ -10,13 +10,18 @@ export const createBrand = AsyncHandler(async (req, res, next) => {
 });
 
 export const getBrands = AsyncHandler(async (req, res, next) => {
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 10;
-  const skip = (page - 1) * limit;
-  const brands = await brandModel.find({}).skip(skip).limit(limit);
-  return res
-    .status(200)
-    .json({ message: "Done", page, result: brands.length, data: brands });
+  const apiFeatures = new ApiFeatures(brandModel, req).paginate();
+  const brands = await apiFeatures.modelQuery;
+
+  // const brandsQuery = brandModel.find({}).skip(skip).limit(limit);
+  // const brands = await brandsQuery;
+
+  return res.status(200).json({
+    message: "Done",
+    // page,
+    result: brands.length,
+    data: brands,
+  });
 });
 
 export const getSpecificBrand = AsyncHandler(async (req, res, next) => {
