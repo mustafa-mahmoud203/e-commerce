@@ -2,6 +2,7 @@ import AsyncHandler from "express-async-handler";
 import brandModel from "../../dataBase/models/brand.model.js";
 import slugify from "slugify";
 import ApiError from "../utils/apiError.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 export const createBrand = AsyncHandler(async (req, res, next) => {
   const { name } = req.body;
