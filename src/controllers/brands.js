@@ -1,16 +1,16 @@
-import AsyncHandler from "express-async-handler";
+import asyncHandler from "express-async-handler";
 import brandModel from "../../dataBase/models/brand.model.js";
 import slugify from "slugify";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
 
-export const createBrand = AsyncHandler(async (req, res, next) => {
+export const createBrand = asyncHandler(async (req, res, next) => {
   const { name } = req.body;
   const brand = await brandModel.create({ name, slug: slugify(name) });
   res.status(201).json({ message: "Done", result: brand.length, data: brand });
 });
 
-export const getBrands = AsyncHandler(async (req, res, next) => {
+export const getBrands = asyncHandler(async (req, res, next) => {
   const apiFeatures = new ApiFeatures(brandModel, req).paginate();
   const brands = await apiFeatures.modelQuery;
 
@@ -25,7 +25,7 @@ export const getBrands = AsyncHandler(async (req, res, next) => {
   });
 });
 
-export const getSpecificBrand = AsyncHandler(async (req, res, next) => {
+export const getSpecificBrand = asyncHandler(async (req, res, next) => {
   const { brandId } = req.params;
 
   const brand = await brandModel.findById(brandId);
@@ -39,7 +39,7 @@ export const getSpecificBrand = AsyncHandler(async (req, res, next) => {
     .json({ message: "Done", result: brand.length, data: brand });
 });
 
-export const deleteBrand = AsyncHandler(async (req, res, next) => {
+export const deleteBrand = asyncHandler(async (req, res, next) => {
   const { brandId } = req.params;
   const brand = await brandModel.findByIdAndDelete(brandId);
   if (!brand) return next(new ApiError("Brand not found", 404));
@@ -47,7 +47,7 @@ export const deleteBrand = AsyncHandler(async (req, res, next) => {
   return res.status(200).json({ message: "Done" });
 });
 
-export const updateBrand = AsyncHandler(async (req, res, next) => {
+export const updateBrand = asyncHandler(async (req, res, next) => {
   const { brandId } = req.params;
   const { name } = req.body;
   const brand = await brandModel.findByIdAndUpdate(
@@ -62,7 +62,7 @@ export const updateBrand = AsyncHandler(async (req, res, next) => {
     .json({ message: "Done", results: brand.length, data: brand });
 });
 
-export const updateBrandImage = AsyncHandler(async (req, res, next) => {
+export const updateBrandImage = asyncHandler(async (req, res, next) => {
   const { brandId } = req.params;
   if (!req.file) return next(new ApiError("file is requird", 400));
 
