@@ -1,14 +1,17 @@
+import path from "path";
+import { fileURLToPath } from "url";
+
 import express from "express";
 import "dotenv/config";
+
 import connectDB from "./dataBase/connection.js";
 import { globalError } from "./src/middleware/errorHandilng.js";
+import ApiError from "./src/utils/apiError.js";
+
 import categoryRouter from "./src/routes/category.route.js";
 import brandsRouter from "./src/routes/brands.route.js";
 import productsRouter from "./src/routes/product.route.js";
 import subCategoryRouter from "./src/routes/subCategory.route.js";
-import ApiError from "./src/utils/apiError.js";
-import path from "path";
-import { fileURLToPath } from "url";
 
 const app = express();
 const port = process.env.PORT || 3001;

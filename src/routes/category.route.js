@@ -20,7 +20,18 @@ router
 router
   .route("/:categoryId")
   .get(validators.getCategory, controllers.getCategory)
-  .patch(validators.updateCategory, controllers.updateCategory)
+  .patch(
+    fileUploads(filesValidation.image, "categories").single("image"),
+    validators.updateCategory,
+    controllers.updateCategory
+  )
   .delete(validators.deleteCategory, controllers.deleteCategory);
 
+router
+  .route("/updateImg/:categoryId")
+  .patch(
+    fileUploads(filesValidation.image, "categories").single("image"),
+    validators.updateCategoryImage,
+    controllers.updateCategoryImage
+  );
 export default router;

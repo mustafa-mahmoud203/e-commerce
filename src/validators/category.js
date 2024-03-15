@@ -23,6 +23,10 @@ export const updateCategory = [
 
   validationMiddleware,
 ];
+export const updateCategoryImage = [
+  check("categoryId").isMongoId().withMessage("invalid category Id"),
+  validationMiddleware,
+];
 
 export const createCategory = [
   check("name")

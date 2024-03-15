@@ -5,9 +5,12 @@ import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
 
 export const createCategory = asyncHandler(async (req, res, next) => {
-  const { name } = req.body;
+  const data = req.body;
+  data.slug = slugify(data.name);
 
-  const category = await categoryModel.create({ name, sulg: slugify(name) });
+  if (req.file) data.image = req.file.image;
+
+  const category = await categoryModel.create(data);
 
   return res
     .status(201)
@@ -38,13 +41,25 @@ export const getCategory = asyncHandler(async (req, res, next) => {
     .json({ message: "Done", results: category.length, data: category });
 });
 
+export const deleteCategory = asyncHandler(async (req, res, next) => {
+  const { categoryId } = req.params;
+  const category = await categoryModel.findByIdAndDelete(categoryId);
+  if (!category) return next(new ApiError("Category not found", 404));
+
+  return res.status(200).json({ message: "Done" });
+});
+
 export const updateCategory = asyncHandler(async (req, res, next) => {
   const { categoryId } = req.params;
   const { name } = req.body;
+
+  // if (req.file) data.image = req.file.image;
   const category = await categoryModel.findByIdAndUpdate(
     categoryId,
-    { name },
-    { new: true }
+    { name, slug: slugify(name) },
+    {
+      new: true,
+    }
   );
   // when use findByIdAndUpdate
   if (!category) return next(new ApiError("Category not found", 404));
@@ -57,10 +72,20 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
     .json({ message: "Done", results: category.length, data: category });
 });
 
-export const deleteCategory = asyncHandler(async (req, res, next) => {
+export const updateCategoryImage = asyncHandler(async (req, res, next) => {
   const { categoryId } = req.params;
-  const category = await categoryModel.findByIdAndDelete(categoryId);
-  if (!category) return next(new ApiError("Category not found", 404));
+  if (!req.file) return next(new ApiError("file is requird", 400));
 
-  return res.status(200).json({ message: "Done" });
+  const category = await categoryModel.findByIdAndUpdate(
+    categoryId,
+    { image: req.file.image },
+    {
+      new: true,
+    }
+  );
+
+  if (!category) return next(new ApiError("Category not found", 404));
+  return res
+    .status(200)
+    .json({ message: "Done", results: category.length, data: category });
 });
