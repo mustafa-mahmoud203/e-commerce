@@ -12,4 +12,11 @@ router
   .patch(validators.updateBrand, controllers.updateBrand)
   .delete(validators.deleteBrand, controllers.deleteBrand);
 
+router
+  .route("/updateImg/:brandId")
+  .patch(
+    fileUploads(filesValidation.image, "categories").single("image"),
+    validators.updateBrandImage,
+    controllers.updateBrandImage
+  );
 export default router;

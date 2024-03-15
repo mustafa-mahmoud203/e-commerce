@@ -23,6 +23,11 @@ export const updateBrand = [
 
   validationMiddleware,
 ];
+export const updateBrandImage = [
+  check("brandId").isMongoId().withMessage("invalid Brand Id"),
+
+  validationMiddleware,
+];
 
 export const createBrand = [
   check("name")
@@ -35,4 +40,3 @@ export const createBrand = [
 
   validationMiddleware,
 ];
-

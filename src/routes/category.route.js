@@ -20,11 +20,7 @@ router
 router
   .route("/:categoryId")
   .get(validators.getCategory, controllers.getCategory)
-  .patch(
-    fileUploads(filesValidation.image, "categories").single("image"),
-    validators.updateCategory,
-    controllers.updateCategory
-  )
+  .patch(validators.updateCategory, controllers.updateCategory)
   .delete(validators.deleteCategory, controllers.deleteCategory);
 
 router

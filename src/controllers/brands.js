@@ -39,6 +39,14 @@ export const getSpecificBrand = AsyncHandler(async (req, res, next) => {
     .json({ message: "Done", result: brand.length, data: brand });
 });
 
+export const deleteBrand = AsyncHandler(async (req, res, next) => {
+  const { brandId } = req.params;
+  const brand = await brandModel.findByIdAndDelete(brandId);
+  if (!brand) return next(new ApiError("Brand not found", 404));
+
+  return res.status(200).json({ message: "Done" });
+});
+
 export const updateBrand = AsyncHandler(async (req, res, next) => {
   const { brandId } = req.params;
   const { name } = req.body;
@@ -54,10 +62,20 @@ export const updateBrand = AsyncHandler(async (req, res, next) => {
     .json({ message: "Done", results: brand.length, data: brand });
 });
 
-export const deleteBrand = AsyncHandler(async (req, res, next) => {
+export const updateBrandImage = AsyncHandler(async (req, res, next) => {
   const { brandId } = req.params;
-  const brand = await brandModel.findByIdAndDelete(brandId);
-  if (!brand) return next(new ApiError("Brand not found", 404));
+  if (!req.file) return next(new ApiError("file is requird", 400));
 
-  return res.status(200).json({ message: "Done" });
+  const brand = await brandModel.findByIdAndUpdate(
+    brandId,
+    { image: req.file.image },
+    {
+      new: true,
+    }
+  );
+
+  if (!brand) return next(new ApiError("brand not found", 404));
+  return res
+    .status(200)
+    .json({ message: "Done", results: brand.length, data: brand });
 });
