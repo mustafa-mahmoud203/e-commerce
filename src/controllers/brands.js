@@ -5,8 +5,12 @@ import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
 
 export const createBrand = asyncHandler(async (req, res, next) => {
-  const { name } = req.body;
-  const brand = await brandModel.create({ name, slug: slugify(name) });
+  const data = req.body;
+  data.slug = slugify(data.name);
+
+  if (req.file) data.image = req.file.image;
+
+  const brand = await brandModel.create(data);
   res.status(201).json({ message: "Done", result: brand.length, data: brand });
 });
 

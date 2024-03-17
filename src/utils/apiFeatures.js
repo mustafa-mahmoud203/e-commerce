@@ -65,5 +65,13 @@ class ApiFeatures {
     }
     return this;
   }
+
+  populate() {
+    this.modelQuery = this.modelQuery.populate({
+      path: "category",
+      select: "name",
+    });
+    return this;
+  }
 }
 export default ApiFeatures;

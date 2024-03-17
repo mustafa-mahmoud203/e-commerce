@@ -1,6 +1,7 @@
 // import { Schema, model } from "mongoose";
 
 import { Schema, model } from "mongoose";
+import { fullImageURL } from "../../src/utils/sharedFunctions.js";
 
 const brandSchema = new Schema(
   {
@@ -20,6 +21,8 @@ const brandSchema = new Schema(
   },
   { timestamps: true }
 );
+
+fullImageURL(brandSchema)
 
 const brandModel = model("Brand", brandSchema);
 

@@ -92,7 +92,7 @@ export const createProduct = [
     .isArray()
     .withMessage("availableColors should be array of string"),
 
-  check("imageCover").notEmpty().withMessage("Product imageCover is required"),
+  check("image").optional().notEmpty().withMessage("Product image is required"),
 
   check("images")
     .optional()

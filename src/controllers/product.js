@@ -8,10 +8,16 @@ import ApiFeatures from "../utils/apiFeatures.js";
 export const createProduct = asyncHandler(async (req, res, next) => {
   const data = req.body;
   data.slug = slugify(data.title);
-
-  //validate for category
-  // const category = await categoryModel.findById(data.category);
-  // if (!category) return next(new ApiError("Category not found", 404));
+  if (req.files) {
+    if (req.files.image) data.image = req.files.image[0].image;
+    if (req.files.images) {
+      const imagesList = [];
+      req.files.images.forEach((ele) => {
+        imagesList.push(ele.image);
+      });
+      data.images = imagesList;
+    }
+  }
 
   const product = await productModel.create(data);
 
@@ -26,7 +32,8 @@ export const getProducts = asyncHandler(async (req, res, next) => {
     .filter()
     .fields()
     .sort()
-    .search();
+    .search()
+    .populate();
 
   // let ProductsQuery = productModel.find(filteringQuery).populate({ path: "category", select: "name" });
   const Products = await apiFeatures.modelQuery;

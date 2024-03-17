@@ -1,12 +1,20 @@
 import { Router } from "express";
 import * as controllers from "../controllers/product.js";
 import * as validators from "../validators/product.js";
+import fileUploads, { filesValidation } from "../utils/multer.js";
 
 const router = Router();
 
 router
   .route("/")
-  .post(validators.createProduct, controllers.createProduct)
+  .post(
+    fileUploads(filesValidation.image, "products").fields([
+      { name: "image", maxCount: 1 },
+      { name: "images", maxCount: 8 },
+    ]),
+    validators.createProduct,
+    controllers.createProduct
+  )
   .get(controllers.getProducts);
 
 router
