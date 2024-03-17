@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { fullImageURL } from "../../src/utils/sharedFunctions.js";
 
 const productSchema = new Schema(
   {
@@ -38,7 +39,7 @@ const productSchema = new Schema(
     },
     colors: [String],
 
-    imageCover: {
+    image: {
       type: String,
       required: true,
     },
@@ -70,6 +71,8 @@ const productSchema = new Schema(
   },
   { timestamps: true }
 );
+
+fullImageURL(productSchema);
 
 const productModel = model("Product", productSchema);
 

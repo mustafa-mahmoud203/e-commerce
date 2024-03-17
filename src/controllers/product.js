@@ -3,14 +3,21 @@ import asyncHandler from "express-async-handler";
 import productModel from "../../dataBase/models/product.model.js";
 import ApiError from "../utils/apiError.js";
 import categoryModel from "../../dataBase/models/category.model.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
   const data = req.body;
   data.slug = slugify(data.title);
-
-  //validate for category
-  // const category = await categoryModel.findById(data.category);
-  // if (!category) return next(new ApiError("Category not found", 404));
+  if (req.files) {
+    if (req.files.image) data.image = req.files.image[0].image;
+    if (req.files.images) {
+      const imagesList = [];
+      req.files.images.forEach((ele) => {
+        imagesList.push(ele.image);
+      });
+      data.images = imagesList;
+    }
+  }
 
   const product = await productModel.create(data);
 
@@ -20,19 +27,20 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const getProducts = asyncHandler(async (req, res, next) => {
-  // *1  convert to int
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 5;
-  const skip = (page - 1) * limit;
-  const Products = await productModel
-    .find({})
-    .skip(skip)
-    .limit(limit)
-    .populate({ path: "category", select: "name " });
+  const apiFeatures = new ApiFeatures(productModel, req)
+    .paginate()
+    .filter()
+    .fields()
+    .sort()
+    .search()
+    .populate();
+
+  // let ProductsQuery = productModel.find(filteringQuery).populate({ path: "category", select: "name" });
+  const Products = await apiFeatures.modelQuery;
   return res.status(200).json({
     message: "Done",
     results: Products.length,
-    page,
+    // page: apiFeatures.req.query.page,
     data: Products,
   });
 });

@@ -1,6 +1,7 @@
 // import { Schema, model } from "mongoose";
 
 import { Schema, model } from "mongoose";
+import { fullImageURL } from "../../src/utils/sharedFunctions.js";
 
 const categorySchema = new Schema(
   {
@@ -21,6 +22,8 @@ const categorySchema = new Schema(
   { timestamps: true }
 );
 
-const categoryModel = model("Category", categorySchema);
+//retutn full image url in response only and not save in db
+fullImageURL(categorySchema);
 
+const categoryModel = model("Category", categorySchema);
 export default categoryModel;

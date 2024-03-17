@@ -92,7 +92,7 @@ export const createProduct = [
     .isArray()
     .withMessage("availableColors should be array of string"),
 
-  check("imageCover").notEmpty().withMessage("Product imageCover is required"),
+  check("image").optional().notEmpty().withMessage("Product image is required"),
 
   check("images")
     .optional()
@@ -122,11 +122,11 @@ export const createProduct = [
     })
     .custom(async (value, { req }) => {
       const subCateIDs = [];
-      const subCategoriesForSpecificCategory = await subCategoryModel.find({
+      const subCategories = await subCategoryModel.find({
         category: req.body.category,
       });
-      subCategoriesForSpecificCategory.forEach((subCategory) => {
-        subCateIDs.push(subCategory._id.toString());
+      subCategories.forEach((val) => {
+        subCateIDs.push(val._id.toString());
       });
       const checkIDs = (target, arr) => target.every((id) => arr.includes(id));
       if (!checkIDs(value, subCateIDs))

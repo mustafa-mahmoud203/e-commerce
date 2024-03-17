@@ -1,10 +1,18 @@
 import { Router } from "express";
 import * as controllers from "../controllers/brands.js";
 import * as validators from "../validators/brands.js";
+import fileUploads, { filesValidation } from "../utils/multer.js";
 
 const router = Router();
 
-router.route("/").post(controllers.createBrand).get(controllers.getBrands);
+router
+  .route("/")
+  .post(
+    fileUploads(filesValidation.image, "brands").single("image"),
+    validators.createBrand,
+    controllers.createBrand
+  )
+  .get(controllers.getBrands);
 
 router
   .route("/:brandId")
@@ -12,4 +20,11 @@ router
   .patch(validators.updateBrand, controllers.updateBrand)
   .delete(validators.deleteBrand, controllers.deleteBrand);
 
+router
+  .route("/updateImg/:brandId")
+  .patch(
+    fileUploads(filesValidation.image, "categories").single("image"),
+    validators.updateBrandImage,
+    controllers.updateBrandImage
+  );
 export default router;
