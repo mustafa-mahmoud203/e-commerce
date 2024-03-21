@@ -19,7 +19,7 @@ const userSchema = new Schema(
     },
     phone: String,
     profileImg: String,
-    
+
     password: {
       type: String,
       required: true,
@@ -29,7 +29,7 @@ const userSchema = new Schema(
     // passwordResetCode: String,
     // passwordResetExpires: Date,
     // passwordResetVerified: Boolean,
-    
+
     role: {
       type: String,
       enum: ["user", "admin", "manager"],
@@ -43,4 +43,4 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 const userModel = model("User", userSchema);
-module.exports = userModel;
+export default userModel;
