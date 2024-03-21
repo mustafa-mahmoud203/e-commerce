@@ -13,6 +13,7 @@ import brandsRouter from "./src/routes/brands.route.js";
 import productsRouter from "./src/routes/product.route.js";
 import subCategoryRouter from "./src/routes/subCategory.route.js";
 import usersRouter from "./src/routes/users.route.js";
+import authRouter from "./src/routes/auth.route.js";
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -27,6 +28,7 @@ app.use("/subCategories", subCategoryRouter);
 app.use("/brands", brandsRouter);
 app.use("/products", productsRouter);
 app.use("/users", usersRouter);
+app.use("/", authRouter);
 app.use("/uploads", express.static(path.join(__dirname, "./src/uploads")));
 app.use("*", (res, req, next) => {
   return next(new ApiError("404 Page Not Found", 404));

@@ -12,7 +12,7 @@ export const createUser = asyncHandler(async (req, res, next) => {
 
   const checkEmail = await userModel.findOne({ email: data.email });
   if (checkEmail) {
-    throw new ApiError("email already exists....", 400);
+    return next(new ApiError("email already exists....", 400));
   }
 
   if (req.file) data.profileImg = req.file.profileImg;
