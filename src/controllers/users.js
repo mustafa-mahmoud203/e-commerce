@@ -9,13 +9,9 @@ export const createUser = asyncHandler(async (req, res, next) => {
   const data = req.body;
   data.slug = slugify(data.name);
   data.password = hashPassword(data.password);
-  const checkEmail = await userModel.findOne({ email: data.email });
-  if (checkEmail) {
-    return next(new ApiError("Email already exists", 400));
-  }
+
   if (req.file) data.profileImg = req.file.profileImg;
 
   const user = await userModel.create(data);
   res.status(201).json({ message: "Done", result: user.length, data: user });
 });
-
