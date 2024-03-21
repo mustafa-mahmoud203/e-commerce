@@ -11,6 +11,24 @@ router
     fileUploads(filesValidation.image, "users").single("profileImg"),
     validators.createUser,
     controllers.createUser
-  );
+  )
+  .get(controllers.getUsers);
 
+router
+  .route("/:userId")
+  .get(validators.getUser, controllers.getSpecificUser)
+  .put(validators.updateUser, controllers.updateUser)
+  .delete(validators.deleteUser, controllers.deleteUser);
+
+router
+  .route("/updatePassword/:userId")
+  .patch(validators.updateUserPassword, controllers.updatePassword);
+
+router
+  .route("/updateImg/:userId")
+  .patch(
+    fileUploads(filesValidation.image, "users").single("profileImg"),
+    validators.updateUserImage,
+    controllers.updateUserImage
+  );
 export default router;
