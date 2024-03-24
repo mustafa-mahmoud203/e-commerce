@@ -3,7 +3,7 @@ import ApiError from "../utils/apiError.js";
 import { jwtVerify } from "../utils/token.js";
 import userModel from "../../dataBase/models/user.model.js";
 
-const auth = asyncHandler(async (req, res, next) => {
+export const auth = asyncHandler(async (req, res, next) => {
   const authorization = req.headers.authorization;
 
   if (!authorization) return next(new ApiError("Token is required", 401));
@@ -24,4 +24,13 @@ const auth = asyncHandler(async (req, res, next) => {
   next();
 });
 
-export default auth;
+export const isAllowedTo = (...roles) => {
+  return asyncHandler(async (req, res, next) => {
+    if (!roles.includes(req.user.role))
+      return next(
+        new ApiError("You are not allowed to access this route", 401)
+      );
+
+    next();
+  });
+};
