@@ -55,4 +55,16 @@ router
     validators.updateUserImage,
     controllers.updateUserImage
   );
+
+router.post(
+  "/forgotPassword",
+  validators.forgotPassword,
+  controllers.forgotPassword
+);
+router.post("/verifyResteCode", controllers.verifyResteCode);
+router.patch(
+  "/resetPassword",
+  validators.resetPassword,
+  controllers.resetPassword
+);
 export default router;

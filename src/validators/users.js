@@ -114,3 +114,27 @@ export const updateUserPassword = [
 
   validationMiddleware,
 ];
+
+export const resetPassword = [
+  check("email").notEmpty().withMessage("email is required").isEmail(),
+
+  check("newPassword")
+    .notEmpty()
+    .withMessage("new Password  is required")
+    .custom((password, { req }) => {
+      if (password !== req.body.passwordConfirm)
+        throw new ApiError("incorrent password Confirmd", 400);
+      return true;
+    }),
+
+  check("passwordConfirm")
+    .notEmpty()
+    .withMessage("Password confirmation is required"),
+
+  validationMiddleware,
+];
+
+export const forgotPassword = [
+  check("email").notEmpty().withMessage("email is required").isEmail(),
+  validationMiddleware,
+];

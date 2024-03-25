@@ -25,10 +25,10 @@ const userSchema = new Schema(
       required: true,
       minlength: 6,
     },
-    // passwordChangedAt: Date,
-    // passwordResetCode: String,
-    // passwordResetExpires: Date,
-    // passwordResetVerified: Boolean,
+    passwordChangedAt: Date,
+    passwordResetCode: String,
+    passwordResetExpires: Date,
+    passwordResetVerified: Boolean,
 
     role: {
       type: String,
