@@ -8,10 +8,11 @@ export const auth = asyncHandler(async (req, res, next) => {
 
   if (!authorization) return next(new ApiError("Token is required", 401));
 
-  if (!authorization.startsWith(process.env.BERAR_KEY))
-    return next(new ApiError("In-valid Berar Key", 400));
+  // if (!authorization.startsWith(process.env.BERAR_KEY))
+  //   return next(new ApiError("In-valid Berar Key", 400));
 
   const token = authorization.split(" ")[1];
+  
 
   const decoded = jwtVerify({ token });
 
