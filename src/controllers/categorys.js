@@ -18,7 +18,7 @@ export const createCategory = asyncHandler(async (req, res, next) => {
 });
 
 export const getCategories = asyncHandler(async (req, res, next) => {
-  const apiFeatures = new ApiFeatures(categoryModel, req).paginate();
+  const apiFeatures = new ApiFeatures(categoryModel, req).paginate({});
   const categories = await apiFeatures.modelQuery;
   // const categoriesQuery =  categoryModel.find({}).skip(skip).limit(limit);
   // const categories = await categoriesQuery

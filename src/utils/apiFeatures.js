@@ -28,7 +28,7 @@ class ApiFeatures {
       .limit(limit);
     return this;
   }
-  // TODO not worked
+
   sort() {
     if (this.req.query.sort) {
       const sortBy = this.req.query.sort.split(",").join(" ");
@@ -66,10 +66,10 @@ class ApiFeatures {
     return this;
   }
 
-  populate() {
+  populate({ path = "", select = "name" }) {
     this.modelQuery = this.modelQuery.populate({
-      path: "category",
-      select: "name",
+      path: path,
+      select: select,
     });
     return this;
   }
