@@ -16,11 +16,13 @@ export const createReview = asyncHandler(async (req, res, next) => {
 });
 
 export const getReviews = asyncHandler(async (req, res, next) => {
-  //    const  filterObeject={}
+  const filterObeject = {};
+  if (req.params.productId) filterObeject.product = req.params.productId;
+
   const apiFeatures = new ApiFeatures(reviewModel, req)
-    .paginate()
+    .paginate(filterObeject)
     .sort()
-    .populate({ path: "user product", select: "name title" });
+    .populate({ path: "product", select: "title" });
   // .populate({ path: "product", select: "title" });
   // .filter()
   // .fields()

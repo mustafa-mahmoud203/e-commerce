@@ -3,8 +3,11 @@ import * as controllers from "../controllers/product.js";
 import * as validators from "../validators/product.js";
 import fileUploads, { filesValidation } from "../utils/multer.js";
 import { auth, isAllowedTo } from "../middleware/auth.js";
+import reviewRouter from "./review.route.js";
+
 const router = Router();
 
+router.use("/:productId/reviews", reviewRouter);
 router
   .route("/")
   .post(
