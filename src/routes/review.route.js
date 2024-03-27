@@ -9,6 +9,7 @@ router
   .post(
     auth,
     isAllowedTo("user"),
+    controllers.createReviewForSpecificProductMiddleware,
     validators.createReview,
     controllers.createReview
   )

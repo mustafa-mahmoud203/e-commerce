@@ -4,6 +4,12 @@ import reviewModel from "../../dataBase/models/review.model.js";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
 
+export const createReviewForSpecificProductMiddleware = asyncHandler(
+  async (req, res, next) => {
+    if (req.params.productId) req.body.product = req.params.productId;
+    next();
+  }
+);
 export const createReview = asyncHandler(async (req, res, next) => {
   const data = req.body;
   if (!req.body.product) return next(new ApiError("product Id is required"));
@@ -23,11 +29,6 @@ export const getReviews = asyncHandler(async (req, res, next) => {
     .paginate(filterObeject)
     .sort()
     .populate({ path: "product", select: "title" });
-  // .populate({ path: "product", select: "title" });
-  // .filter()
-  // .fields()
-  // .search()
-  //
   const reviews = await apiFeatures.modelQuery;
   return res.status(200).json({
     message: "Done",
