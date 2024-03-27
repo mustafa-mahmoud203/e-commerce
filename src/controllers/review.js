@@ -35,7 +35,7 @@ export const getReviews = asyncHandler(async (req, res, next) => {
     // page: apiFeatures.req.query.page,
     data: reviews,
   });
-});
+});//
 
 export const getReview = asyncHandler(async (req, res, next) => {
   const { reviewId } = req.params;
