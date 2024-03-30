@@ -54,15 +54,13 @@ export const updateReview = asyncHandler(async (req, res, next) => {
   const { reviewId } = req.params;
   const data = req.body;
 
-  const review = await reviewModel.updateOne(
+  const review = await reviewModel.findOneAndUpdate(
     { _id: reviewId, user: req.user._id },
     data,
-    {
-      new: true,
-    }
+    { new: true }
   );
   // when use findByIdAndUpdate
-  if (!review.modifiedCount)
+  if (!review)
     return next(
       new ApiError(
         "review not found or this user cna't update this review",
@@ -70,9 +68,9 @@ export const updateReview = asyncHandler(async (req, res, next) => {
       )
     );
 
-  return res
-    .status(200)
-    .json({ message: "Done", results: review.length, data: review });
+  //triggere save event when update review
+  review.save();
+  return res.status(200).json({ message: "Done", data: review });
 });
 
 //TODO not works
@@ -85,7 +83,8 @@ export const deleteReview = asyncHandler(async (req, res, next) => {
   if (review.user.toString() !== req.user._id.toString())
     return next(new ApiError("this user cna't delete this review", 400));
 
-  //   const deletedReview = await reviewModel.deleteOne({ _id: reviewId });
-  await reviewModel.deleteOne({ _id: reviewId });
+  const reviewDate = await reviewModel.findByIdAndDelete(reviewId);
+  //triggere save event when delete review
+  reviewDate.deleteOne();
   return res.status(200).json({ message: "Done" });
 });
