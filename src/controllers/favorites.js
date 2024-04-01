@@ -49,9 +49,12 @@ export const removeProductToFavoritelist = asyncHandler(
 
 export const getLoggedUserFavoritelist = asyncHandler(
   async (req, res, next) => {
+    const filteringObj = { _id: req.user._id };
     const apiFeatuers = new ApiFeatures(userModel, req);
 
-    apiFeatuers.paginate().populate({ path: "favorites", select: "title" });
+    apiFeatuers
+      .paginate(filteringObj)
+      .populate({ path: "favorites", select: "title" });
 
     const user = await apiFeatuers.modelQuery;
 
