@@ -4,8 +4,56 @@ import userModel from "../../dataBase/models/user.model.js";
 import ApiError from "../utils/apiError.js";
 import { comparePassword } from "../utils/hashAndComparePassword.js";
 
+export const getUser = [
+  check("userId").isMongoId().withMessage("invalid User Id"),
+  validationMiddleware,
+];
+
+export const deleteUser = [
+  check("userId").isMongoId().withMessage("invalid uUser Id"),
+  validationMiddleware,
+];
+
+export const createUser = [
+  check("name")
+    .notEmpty()
+    .withMessage("name is required")
+    .isLength({ min: 3 })
+    .withMessage("name must be at least 3 characters")
+    .isLength({ max: 32 })
+    .withMessage("name must be at most 32 characters"),
+
+  check("email").notEmpty().withMessage("email is required").isEmail(),
+
+  check("password")
+    .notEmpty()
+    .withMessage("Password required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters")
+    .custom((password, { req }) => {
+      if (password !== req.body.passwordConfirm) {
+        throw new ApiError("Password Confirmation incorrect", 400);
+      }
+      return true;
+    }),
+
+  check("passwordConfirm")
+    .notEmpty()
+    .withMessage("Password confirmation is required"),
+
+  check("phone")
+    .optional()
+    .isMobilePhone(["ar-EG"])
+    .withMessage("Invalid phone number only accepted Egypt  numbers"),
+
+  check("profileImg").optional(),
+  check("role").optional(),
+
+  validationMiddleware,
+];
+
 export const updateUser = [
-  // check("userId").isMongoId().withMessage("invalid User Id"),
+  check("userId").isMongoId().withMessage("invalid User Id"),
   check("name")
     .optional()
 
@@ -27,8 +75,14 @@ export const updateUser = [
   validationMiddleware,
 ];
 
+export const updateUserImage = [
+  check("userId").isMongoId().withMessage("invalid user Id"),
+
+  validationMiddleware,
+];
+
 export const updateUserPassword = [
-  // check("userId").isMongoId().withMessage("invalid user Id"),
+  check("userId").isMongoId().withMessage("invalid user Id"),
 
   check("currentPassword")
     .notEmpty()
@@ -38,13 +92,12 @@ export const updateUserPassword = [
     .notEmpty()
     .withMessage("new Password  is required")
     .custom(async (password, { req }) => {
-      // const user = await userModel.findById(req.params.userId);
-      // if (!user) throw new ApiError("user not found", 404);
-      if (!req.user._id) throw new ApiError("user not Loggind", 404);
+      const user = await userModel.findById(req.params.userId);
+      if (!user) throw new ApiError("user not found", 404);
 
       const checkCurrentPasseord = comparePassword({
         password: req.body.currentPassword,
-        userPassword: req.user.password,
+        userPassword: user.password,
       });
 
       if (!checkCurrentPasseord)

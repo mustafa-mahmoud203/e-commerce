@@ -9,41 +9,12 @@ import userModel from "../../dataBase/models/user.model.js";
 
 import sendEmail from "../utils/sendEmail.js";
 
-export const createUser = asyncHandler(async (req, res, next) => {
-  const data = req.body;
-  data.slug = slugify(data.name);
-  data.password = hashPassword(data.password);
-
-  const checkEmail = await userModel.findOne({ email: data.email });
-  if (checkEmail) {
-    return next(new ApiError("email already exists....", 400));
-  }
-
-  if (req.file) data.profileImg = req.file.profileImg;
-
-  const user = await userModel.create(data);
-  res.status(201).json({ message: "Done", result: user.length, data: user });
-});
-
-export const getUsers = asyncHandler(async (req, res, next) => {
-  const apiFeatures = new ApiFeatures(userModel, req).paginate();
-  const users = await apiFeatures.modelQuery;
-
-  // const usersQuery = userModel.find({}).skip(skip).limit(limit);
-  // const users = await usersQuery;
-
-  return res.status(200).json({
-    message: "Done",
-    // page,
-    result: users.length,
-    data: users,
-  });
-});
-
 export const getSpecificUser = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
+  //   const { userId } = req.params;
 
-  const user = await userModel.findById(userId);
+  if (!req.user._id) return next(new ApiError("user not Loggind", 404));
+
+  const user = await userModel.findById(req.user._id);
   if (!user) {
     return next(new ApiError("user not found", 404));
   }
@@ -53,21 +24,17 @@ export const getSpecificUser = asyncHandler(async (req, res, next) => {
     .json({ message: "Done", result: user.length, data: user });
 });
 
-export const deleteUser = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
-  const user = await userModel.findByIdAndDelete(userId);
-  if (!user) return next(new ApiError("user not found", 404));
-
-  return res.status(200).json({ message: "Done" });
-});
-
 export const updateUser = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
+  //   const { userId } = req.params;
+
+  //   const checkUser = await userModel.findById(userId);
+  //   if (!checkUser) return next(new ApiError("User not found", 404));
+
   const data = req.body;
-  const checkUser = await userModel.findById(userId);
-  if (!checkUser) return next(new ApiError("User not found", 404));
-  data.slug = slugify(data.name || checkUser.name);
-  const user = await userModel.updateOne({ _id: userId }, data);
+  if (!req.user._id) return next(new ApiError("user not Loggind", 404));
+
+  data.slug = slugify(data.name || req.user.name);
+  const user = await userModel.updateOne({ _id: req.user._id }, data);
 
   return res
     .status(200)
@@ -75,10 +42,12 @@ export const updateUser = asyncHandler(async (req, res, next) => {
 });
 
 export const updateUserImage = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
+  //   const { userId } = req.params;
+
+  if (!req.user._id) return next(new ApiError("user not Loggind", 404));
   if (!req.file) return next(new ApiError("file is requird", 400));
   const user = await userModel.findByIdAndUpdate(
-    userId,
+    req.user._id,
     { profileImg: req.file.image },
     {
       new: true,
@@ -92,11 +61,11 @@ export const updateUserImage = asyncHandler(async (req, res, next) => {
 });
 
 export const updatePassword = asyncHandler(async (req, res, next) => {
-  const { userId } = req.params;
+  // const { userId } = req.params;
   const { newPassword } = req.body;
 
   const user = await userModel.updateOne(
-    { _id: userId },
+    { _id: req.user._id },
     {
       password: hashPassword(newPassword),
     }
