@@ -10,6 +10,6 @@ router.use(auth, isAllowedTo("user"));
 router.route("/").post(controllers.addProductToFavoritelist);
 // .get(controllers.getLoggedUserFavoritelist);
 
-// router.delete("/:productId", controllers.removeProductToFavoritelist);
+router.delete("/:productId", controllers.removeProductToFavoritelist);
 
 export default router;
