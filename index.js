@@ -16,6 +16,7 @@ import usersRouter from "./src/routes/users.route.js";
 import adminUsersRouter from "./src/routes/users(Admin).route.js";
 import authRouter from "./src/routes/auth.route.js";
 import reviewRouter from "./src/routes/review.route.js";
+import favoritesRouter from "./src/routes/favorites.route.js";
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -31,6 +32,7 @@ app.use("/products", productsRouter);
 app.use("/admin/users", adminUsersRouter);
 app.use("/users", usersRouter);
 app.use("/reviews", reviewRouter);
+app.use("/favorites", favoritesRouter);
 app.use("/", authRouter);
 app.use("/uploads", express.static(path.join(__dirname, "./src/uploads")));
 app.use("*", (res, req, next) => {
