@@ -16,7 +16,7 @@ export const addUserAddress = asyncHandler(async (req, res, next) => {
   if (!user) return next(new ApiError("user not found", 404));
   return res.status(201).json({
     status: "success",
-    message: "address address successfully",
+    message: "added address successfully",
     data: data,
   });
 });
@@ -37,3 +37,19 @@ export const removeUserAddress = asyncHandler(async (req, res, next) => {
     message: "removed address successfully",
   });
 });
+
+export const getLoggedUserAddresses = asyncHandler(async (req, res, next) => {
+  const filteringObj = { _id: req.user._id };
+  const apiFeatuers = new ApiFeatures(userModel, req);
+
+  apiFeatuers.paginate(filteringObj).populate({ path: "addresses" });
+
+  const user = await apiFeatuers.modelQuery;
+
+  if (!user) return next(new ApiError("user not found", 404));
+  return res.status(200).json({
+    status: "success",
+    data: user,
+  });
+});
+
