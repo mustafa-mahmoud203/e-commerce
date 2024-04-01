@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import productModel from "../../dataBase/models/product.model.js";
 import userModel from "../../dataBase/models/user.model.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 export const addProductToFavoritelist = asyncHandler(async (req, res, next) => {
   const { productId } = req.body;
@@ -38,10 +39,26 @@ export const removeProductToFavoritelist = asyncHandler(
     );
 
     if (!user) return next(new ApiError("user not found", 404));
-    return res.status(200).json({
+    return res.status(201).json({
       status: "success",
       message: "Product removed successfully to your favorites list.",
       data: productId,
+    });
+  }
+);
+
+export const getLoggedUserFavoritelist = asyncHandler(
+  async (req, res, next) => {
+    const apiFeatuers = new ApiFeatures(userModel, req);
+
+    apiFeatuers.paginate().populate({ path: "favorites", select: "title" });
+
+    const user = await apiFeatuers.modelQuery;
+
+    if (!user) return next(new ApiError("user not found", 404));
+    return res.status(201).json({
+      status: "success",
+      data: user,
     });
   }
 );
