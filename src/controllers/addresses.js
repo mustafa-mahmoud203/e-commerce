@@ -14,51 +14,26 @@ export const addUserAddress = asyncHandler(async (req, res, next) => {
   );
 
   if (!user) return next(new ApiError("user not found", 404));
-  return res.status(200).json({
+  return res.status(201).json({
     status: "success",
-    message: "address added successfully",
+    message: "address address successfully",
     data: data,
   });
 });
 
-export const removeProductToFavoritelist = asyncHandler(
-  async (req, res, next) => {
-    const { productId } = req.params;
-    const product = await productModel.findById(productId);
-    if (!product) return next(new ApiError("product not found", 404));
+export const removeUserAddress = asyncHandler(async (req, res, next) => {
+  const { addressId } = req.params;
+  const user = await userModel.findByIdAndUpdate(
+    req.user._id,
+    {
+      $pull: { addresses: { _id: addressId } },
+    },
+    { new: true }
+  );
 
-    const user = await userModel.findByIdAndUpdate(
-      req.user._id,
-      {
-        $pull: { favorites: productId },
-      },
-      { new: true }
-    );
-
-    if (!user) return next(new ApiError("user not found", 404));
-    return res.status(201).json({
-      status: "success",
-      message: "Product removed successfully to your favorites list.",
-      data: productId,
-    });
-  }
-);
-
-export const getLoggedUserFavoritelist = asyncHandler(
-  async (req, res, next) => {
-    const filteringObj = { _id: req.user._id };
-    const apiFeatuers = new ApiFeatures(userModel, req);
-
-    apiFeatuers
-      .paginate(filteringObj)
-      .populate({ path: "favorites", select: "title" });
-
-    const user = await apiFeatuers.modelQuery;
-
-    if (!user) return next(new ApiError("user not found", 404));
-    return res.status(201).json({
-      status: "success",
-      data: user,
-    });
-  }
-);
+  if (!user) return next(new ApiError("user not found", 404));
+  return res.status(200).json({
+    status: "success",
+    message: "removed address successfully",
+  });
+});

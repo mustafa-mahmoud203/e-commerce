@@ -10,6 +10,6 @@ router.use(auth, isAllowedTo("user"));
 router.route("/").post(controllers.addUserAddress);
 //   .get(controllers.getLoggedUserAddresses);
 
-// router.delete("/:productId", controllers.removeUserAddress);
+router.delete("/:addressId", controllers.removeUserAddress);
 
 export default router;

@@ -17,7 +17,7 @@ export const addProductToFavoritelist = asyncHandler(async (req, res, next) => {
   );
 
   if (!user) return next(new ApiError("user not found", 404));
-  return res.status(200).json({
+  return res.status(201).json({
     status: "success",
     message: "Product added successfully to your favorites list.",
     data: productId,
@@ -39,7 +39,7 @@ export const removeProductToFavoritelist = asyncHandler(
     );
 
     if (!user) return next(new ApiError("user not found", 404));
-    return res.status(201).json({
+    return res.status(200).json({
       status: "success",
       message: "Product removed successfully to your favorites list.",
       data: productId,
@@ -59,7 +59,7 @@ export const getLoggedUserFavoritelist = asyncHandler(
     const user = await apiFeatuers.modelQuery;
 
     if (!user) return next(new ApiError("user not found", 404));
-    return res.status(201).json({
+    return res.status(200).json({
       status: "success",
       data: user,
     });
