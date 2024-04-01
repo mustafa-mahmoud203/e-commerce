@@ -39,6 +39,22 @@ const userSchema = new Schema(
       type: Boolean,
       default: true,
     },
+
+    favorites: [
+      {
+        type: Schema.ObjectId,
+        ref: "Product",
+      },
+    ],
+    addresses: [
+      {
+        alias: String,
+        details: String,
+        phone: String,
+        city: String,
+        postalCode: String,
+      },
+    ],
   },
   { timestamps: true }
 );
