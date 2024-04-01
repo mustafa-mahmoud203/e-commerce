@@ -53,3 +53,27 @@ export const getLoggedUserAddresses = asyncHandler(async (req, res, next) => {
   });
 });
 
+export const updateUserAddress = asyncHandler(async (req, res, next) => {
+  const { addressId } = req.params;
+  const data = req.body;
+
+  const user = await userModel.findOne({
+    _id: req.user._id,
+    "addresses._id": addressId,
+  });
+
+  user.addresses.forEach((address, idx) => {
+    if (address._id.toString() === addressId) {
+      user.addresses[idx] = Object.assign(address, data);
+    }
+  });
+
+  await user.save();
+
+  if (!user) return next(new ApiError("user not found", 404));
+  return res.status(200).json({
+    status: "success",
+    message: "updated address successfully",
+    data: user.addresses,
+  });
+});

@@ -12,6 +12,9 @@ router
   .post(controllers.addUserAddress)
   .get(controllers.getLoggedUserAddresses);
 
-router.delete("/:addressId", controllers.removeUserAddress);
+router
+  .route("/:addressId")
+  .delete(controllers.removeUserAddress)
+  .put(controllers.updateUserAddress);
 
 export default router;
