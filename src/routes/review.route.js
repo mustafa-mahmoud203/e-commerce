@@ -2,17 +2,19 @@ import { Router } from "express";
 import * as controllers from "../controllers/review.js";
 import * as validators from "../validators/review.js";
 import { auth, isAllowedTo } from "../middleware/auth.js";
-const router = Router();
+const router = Router({ mergeParams: true });
 
 router
   .route("/")
-  .get(controllers.getReviews)
   .post(
     auth,
     isAllowedTo("user"),
+    controllers.createReviewForSpecificProductMiddleware,
     validators.createReview,
     controllers.createReview
-  );
+  )
+  .get(controllers.getReviews);
+
 router
   .route("/:reviewId")
   .get(validators.getReview, controllers.getReview)

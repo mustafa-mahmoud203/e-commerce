@@ -4,6 +4,12 @@ import reviewModel from "../../dataBase/models/review.model.js";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
 
+export const createReviewForSpecificProductMiddleware = asyncHandler(
+  async (req, res, next) => {
+    if (req.params.productId) req.body.product = req.params.productId;
+    next();
+  }
+);
 export const createReview = asyncHandler(async (req, res, next) => {
   const data = req.body;
   if (!req.body.product) return next(new ApiError("product Id is required"));
@@ -16,16 +22,13 @@ export const createReview = asyncHandler(async (req, res, next) => {
 });
 
 export const getReviews = asyncHandler(async (req, res, next) => {
-  //    const  filterObeject={}
-  const apiFeatures = new ApiFeatures(reviewModel, req)
-    .paginate()
-    .sort()
-    .populate({ path: "user product", select: "name title" });
-  // .populate({ path: "product", select: "title" });
-  // .filter()
-  // .fields()
-  // .search()
+  const filterObeject = {};
+  if (req.params.productId) filterObeject.product = req.params.productId;
 
+  const apiFeatures = new ApiFeatures(reviewModel, req)
+    .paginate(filterObeject)
+    .sort()
+    .populate({ path: "product", select: "title" });
   const reviews = await apiFeatures.modelQuery;
   return res.status(200).json({
     message: "Done",
@@ -33,7 +36,7 @@ export const getReviews = asyncHandler(async (req, res, next) => {
     // page: apiFeatures.req.query.page,
     data: reviews,
   });
-});
+}); //
 
 export const getReview = asyncHandler(async (req, res, next) => {
   const { reviewId } = req.params;
@@ -51,15 +54,13 @@ export const updateReview = asyncHandler(async (req, res, next) => {
   const { reviewId } = req.params;
   const data = req.body;
 
-  const review = await reviewModel.updateOne(
+  const review = await reviewModel.findOneAndUpdate(
     { _id: reviewId, user: req.user._id },
     data,
-    {
-      new: true,
-    }
+    { new: true }
   );
   // when use findByIdAndUpdate
-  if (!review.modifiedCount)
+  if (!review)
     return next(
       new ApiError(
         "review not found or this user cna't update this review",
@@ -67,9 +68,9 @@ export const updateReview = asyncHandler(async (req, res, next) => {
       )
     );
 
-  return res
-    .status(200)
-    .json({ message: "Done", results: review.length, data: review });
+  //triggere save event when update review
+  review.save();
+  return res.status(200).json({ message: "Done", data: review });
 });
 
 //TODO not works
@@ -82,7 +83,8 @@ export const deleteReview = asyncHandler(async (req, res, next) => {
   if (review.user.toString() !== req.user._id.toString())
     return next(new ApiError("this user cna't delete this review", 400));
 
-  //   const deletedReview = await reviewModel.deleteOne({ _id: reviewId });
-  await reviewModel.deleteOne({ _id: reviewId });
+  const reviewDate = await reviewModel.findByIdAndDelete(reviewId);
+  //triggere save event when delete review
+  reviewDate.deleteOne();
   return res.status(200).json({ message: "Done" });
 });
