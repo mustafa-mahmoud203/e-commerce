@@ -25,18 +25,16 @@ export const getCoupons = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const getSpecificBrand = asyncHandler(async (req, res, next) => {
-  const { brandId } = req.params;
+export const getSpecificCoupon = asyncHandler(async (req, res, next) => {
+  const { couponId } = req.params;
 
-  const brand = await brandModel.findById(brandId);
+  const coupon = await couponModel.findById(couponId);
 
-  if (!brand) {
-    return next(new ApiError("Brand not found", 404));
+  if (!coupon) {
+    return next(new ApiError("coupon not found", 404));
   }
 
-  return res
-    .status(200)
-    .json({ message: "Done", result: brand.length, data: brand });
+  return res.status(200).json({ message: "Done", data: coupon });
 });
 
 export const deleteBrand = asyncHandler(async (req, res, next) => {
