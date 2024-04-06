@@ -14,8 +14,8 @@ export const getCoupons = asyncHandler(async (req, res, next) => {
   const apiFeatures = new ApiFeatures(couponModel, req).paginate();
   const coupons = await apiFeatures.modelQuery;
 
-  // const brandsQuery = brandModel.find({}).skip(skip).limit(limit);
-  // const brands = await brandsQuery;
+  // const couponsQuery = couponModel.find({}).skip(skip).limit(limit);
+  // const coupons = await couponsQuery;
 
   return res.status(200).json({
     message: "Done",
@@ -37,7 +37,7 @@ export const getSpecificCoupon = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ message: "Done", data: coupon });
 });
 
-export const deleteBrand = asyncHandler(async (req, res, next) => {
+export const deleteCoupon = asyncHandler(async (req, res, next) => {
   const { couponId } = req.params;
   const coupon = await couponModel.findByIdAndDelete(couponId);
   if (!coupon) return next(new ApiError("coupon not found", 404));
@@ -46,16 +46,12 @@ export const deleteBrand = asyncHandler(async (req, res, next) => {
 });
 
 export const updateCoupon = asyncHandler(async (req, res, next) => {
-  const { brandId } = req.params;
-  const { name } = req.body;
-  const brand = await brandModel.findByIdAndUpdate(
-    brandId,
-    { name, slug: slugify(name) },
-    { new: true }
-  );
-  if (!brand) return next(new ApiError("Category not found", 404));
+  const { couponId } = req.params;
+  const data = req.body;
+  const coupon = await couponModel.findByIdAndUpdate(couponId, data, {
+    new: true,
+  });
+  if (!coupon) return next(new ApiError("Category not found", 404));
 
-  return res
-    .status(200)
-    .json({ message: "Done", results: brand.length, data: brand });
+  return res.status(200).json({ message: "Done", data: coupon });
 });
