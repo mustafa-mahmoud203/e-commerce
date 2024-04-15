@@ -55,3 +55,11 @@ export const addProductToCart = asyncHandler(async (req, res, next) => {
     .json({ message: "add product to cart successfuly", data: cart });
 });
 
+export const getLoggedUserCart = asyncHandler(async (req, res, next) => {
+  const cart = await cartModel.findOne({ user: req.user._id });
+
+  if (!cart) {
+    return next(new ApiError("cart not found", 404));
+  }
+  res.status(200).json({ message: "get cart successfuly", data: cart });
+});

@@ -7,6 +7,9 @@ const router = Router();
 
 router.use(auth, isAllowedTo("user"));
 
-router.route("/").post(controllers.addProductToCart);
+router
+  .route("/")
+  .post(controllers.addProductToCart)
+  .get(controllers.getLoggedUserCart);
 
 export default router;
