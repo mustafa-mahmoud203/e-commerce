@@ -7,7 +7,7 @@ export const createCoupon = asyncHandler(async (req, res, next) => {
   const data = req.body;
 
   const coupon = await couponModel.create(data);
-  res.status(201).json({ message: "Done", data: coupon });
+  return res.status(201).json({ message: "Done", data: coupon });
 });
 
 export const getCoupons = asyncHandler(async (req, res, next) => {

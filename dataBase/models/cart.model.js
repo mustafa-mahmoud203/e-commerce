@@ -10,7 +10,10 @@ const cartSchema = new Schema(
         },
         color: String,
         price: Number,
-        quantity: Number,
+        quantity: {
+          type: Number,
+          default: 1,
+        },
       },
     ],
     totalCartPrice: Number,
