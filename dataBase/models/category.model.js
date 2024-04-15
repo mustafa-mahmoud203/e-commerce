@@ -1,5 +1,3 @@
-// import { Schema, model } from "mongoose";
-
 import { Schema, model } from "mongoose";
 import { fullImageURL } from "../../src/utils/sharedFunctions.js";
 

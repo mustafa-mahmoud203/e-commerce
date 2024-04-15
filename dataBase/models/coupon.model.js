@@ -13,9 +13,9 @@ const couponSchema = new Schema(
       required: true,
     },
     discount: {
-      type: Number,
+      type: Number, 
       required: true,
-    },
+    },               
   },
   { timestamps: true }
 );
