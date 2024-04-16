@@ -12,10 +12,10 @@ router
   .post(controllers.addProductToCart)
   .get(controllers.getLoggedUserCart)
   .delete(controllers.clearCartItem);
-
 router
   .route("/:itemId")
   .patch(controllers.updateCartProudctQuantity)
   .delete(controllers.removeCartItem);
 
+router.put("/apply-coupon", controllers.applyCoupon);
 export default router;

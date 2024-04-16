@@ -7,18 +7,13 @@ const router = Router();
 
 router.use(auth, isAllowedTo("admin", "manager"));
 
-router
-  .route("/")
-  .post(
-    // validators.createAndRemoveFavorites,
-    controllers.createCoupon
-  )
-//   .get(controllers.getCoupons);
+router.route("/").post(controllers.createCoupon);
+// .get(controllers.getCoupons);
 
-// router
-//   .route("/:productId")
-//   .get(controllers.specificCoupon)
-//   .delete(controllers.deleteCoupon)
+router
+  .route("/:couponId")
+  .get(controllers.getSpecificCoupon)
+  .delete(controllers.deleteCoupon)
   .put(controllers.updateCoupon);
 
 export default router;
