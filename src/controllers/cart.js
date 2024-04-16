@@ -5,10 +5,10 @@ import cartModel from "../../dataBase/models/cart.model.js";
 
 const calculateTotalPrice = (cart) => {
   let totalPrice = 0;
-  cart.cartItems.forEach(
-    (product) => (totalPrice += product.price * product.quantity)
-  );
-  return totalPrice;
+  cart.cartItems.forEach((product) => {
+    totalPrice += product.price * product.quantity;
+  });
+  cart.totalCartPrice = totalPrice;
 };
 
 export const addProductToCart = asyncHandler(async (req, res, next) => {
@@ -46,8 +46,8 @@ export const addProductToCart = asyncHandler(async (req, res, next) => {
       ],
     });
   }
-  const totalPrice = calculateTotalPrice(cart);
-  cart.totalCartPrice = totalPrice;
+  calculateTotalPrice(cart);
+
   await cart.save();
 
   res
@@ -61,5 +61,61 @@ export const getLoggedUserCart = asyncHandler(async (req, res, next) => {
   if (!cart) {
     return next(new ApiError("cart not found", 404));
   }
-  res.status(200).json({ message: "get cart successfuly", data: cart });
+  res.status(200).json({
+    message: "get cart successfuly",
+    length: cart.cartItems.length,
+    data: cart,
+  });
+});
+
+export const updateCartProudctQuantity = asyncHandler(
+  async (req, res, next) => {
+    const { itemId } = req.params;
+    const cart = await cartModel.findOne({ user: req.user._id });
+    if (!cart) {
+      return next(new ApiError("cart not found", 404));
+    }
+
+    const productIndex = cart.cartItems.findIndex(
+      (item) => item._id.toString() === itemId
+    );
+    if (productIndex === -1) {
+      return next(
+        new ApiError(`no product for this Id :${itemId} in cart`, 404)
+      );
+    }
+    cart.cartItems[productIndex].quantity = req.body.quantity;
+
+    calculateTotalPrice(cart);
+    await cart.save();
+    res.status(200).json({
+      message: "update Cart Proudct Quantity successfuly",
+      data: cart,
+    });
+  }
+);
+export const removeCartItem = asyncHandler(async (req, res, next) => {
+  const { itemId } = req.params;
+
+  const cart = await cartModel.findOneAndUpdate(
+    { user: req.user._id },
+    { $pull: { cartItems: { _id: itemId } } },
+    { new: true }
+  );
+
+  calculateTotalPrice(cart);
+  await cart.save();
+  return res.status(200).json({
+    message: "pull item from Cart successfuly",
+    length: cart.cartItems.length,
+    data: cart,
+  });
+});
+export const clearCartItem = asyncHandler(async (req, res, next) => {
+  const cart = await cartModel.findOneAndDelete({ user: req.user._id });
+
+  return res.status(200).json({
+    message: "Cart  has been cleared successfuly",
+    oldData: cart,
+  });
 });

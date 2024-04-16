@@ -10,6 +10,12 @@ router.use(auth, isAllowedTo("user"));
 router
   .route("/")
   .post(controllers.addProductToCart)
-  .get(controllers.getLoggedUserCart);
+  .get(controllers.getLoggedUserCart)
+  .delete(controllers.clearCartItem);
+
+router
+  .route("/:itemId")
+  .patch(controllers.updateCartProudctQuantity)
+  .delete(controllers.removeCartItem);
 
 export default router;
