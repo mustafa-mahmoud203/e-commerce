@@ -29,6 +29,12 @@ const orderSchema = new Schema(
       type: Number,
       default: 0,
     },
+    shippingAddress: {
+      details: String,
+      phone: String,
+      city: String,
+      postalCode: String,
+    },
     totalOrderPrice: Number,
     paymentMethodType: {
       type: String,
