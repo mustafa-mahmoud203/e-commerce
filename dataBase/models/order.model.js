@@ -8,7 +8,7 @@ const orderSchema = new Schema(
       require: true,
     },
 
-    cartItems: [
+    orderItems: [
       {
         product: {
           type: Schema.ObjectId,
