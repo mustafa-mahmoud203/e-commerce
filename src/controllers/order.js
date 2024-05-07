@@ -1,3 +1,7 @@
+import stripeLib from "stripe";
+const apiKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeLib(apiKey);
+
 import asyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import productModel from "../../dataBase/models/product.model.js";
@@ -14,7 +18,7 @@ export const createCashOrder = asyncHandler(async (req, res, next) => {
   // const { cartId } = req.params;
   // const cart = await cartModel.findById(cartId);
   const cart = await cartModel.findOne({ user: req.user._id });
-  if (!cart) return next(new ApiError("cart not found cart for this ID", 404));
+  if (!cart) return next(new ApiError("not cart found for logged user", 404));
 
   // 2) Get order price depend on cart price "Check if coupon apply"
   const cartPrice = cart.totalPriceAfterDiscount
@@ -53,7 +57,9 @@ export const createCashOrder = asyncHandler(async (req, res, next) => {
     await cartModel.findOneAndDelete({ user: req.user._id });
   }
 
-  return res.status(201).json({ message: "success", data: order });
+  return res
+    .status(201)
+    .json({ message: "create Order successfuly", data: order });
 });
 
 export const getOrders = asyncHandler(async (req, res, next) => {
@@ -70,6 +76,7 @@ export const getOrders = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json({ message: "success", data: orders });
 });
+
 export const getSpecificOrder = asyncHandler(async (req, res, next) => {
   const { orderId } = req.params;
   const order = await orderModel
@@ -81,4 +88,78 @@ export const getSpecificOrder = asyncHandler(async (req, res, next) => {
     .populate({ path: "orderItems.product", select: "title price" });
 
   return res.status(200).json({ message: "success", data: order });
+});
+
+export const updateOrderPaidStates = asyncHandler(async (req, res, next) => {
+  const { orderId } = req.params;
+  const order = await orderModel.findById(orderId);
+  if (!order) return next(new ApiError("order not found", 404));
+  order.isPaid = true;
+  order.paidAt = Date.now();
+
+  await order.save();
+
+  return res
+    .status(200)
+    .json({ message: "order paid states is updated", data: order });
+});
+
+export const updateOrderDeliverdStates = asyncHandler(
+  async (req, res, next) => {
+    const { orderId } = req.params;
+    const order = await orderModel.findById(orderId);
+    if (!order) return next(new ApiError("order not found", 404));
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+
+    await order.save();
+
+    return res
+      .status(200)
+      .json({ message: "order Deliverd states is updated", data: order });
+  }
+);
+
+// @desc  Get cheackOut session from stripe and sent to response
+
+export const createStripeSession = asyncHandler(async (req, res, next) => {
+  // app settings
+  const taxPrice = 0;
+  const shippingPrice = 0;
+
+  const cart = await cartModel.findOne({ user: req.user._id });
+  if (!cart) return next(new ApiError("not cart found for logged user", 404));
+
+  // 2) Get order price depend on cart price "Check if coupon apply"
+  const cartPrice = cart.totalPriceAfterDiscount
+    ? cart.totalPriceAfterDiscount
+    : cart.totalCartPrice;
+
+  const totalOrderPrice = cartPrice + taxPrice + shippingPrice;
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: "egp",
+          unit_amount: totalOrderPrice * 100,
+          product_data: {
+            name: req.user.name,
+          },
+        },
+
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    customer_email: req.user.email,
+    client_reference_id: cart._id,
+    metadata: req.body.shippingAddress,
+    success_url: `${req.protocol}://${req.get("host")}/order`,
+    cancel_url: `${req.protocol}://${req.get("host")}/cart`,
+  });
+
+  return res
+    .status(200)
+    .json({ message: "create stripe session successfuly", data: session });
 });
