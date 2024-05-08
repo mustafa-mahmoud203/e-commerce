@@ -1,5 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
+import cors from "cors";
+import compression from "compression";
 
 import express from "express";
 import "dotenv/config";
@@ -18,6 +20,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 connectDB();
 
 app.use(express.json());
+
+app.use(cors());
+app.options("*", cors());
+
+app.use(compression());
 
 // All app routes
 indexRoutes(app);
