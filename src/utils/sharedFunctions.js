@@ -8,7 +8,7 @@ const chackImage = (doc) => {
   if (doc.images) {
     const imageList = [];
     doc.images.forEach((image) => {
-      const imageURL = `${process.env.DEV_BADED_URL}/uploads/${image}`;
+      const imageURL = `${process.env.slug}/uploads/${image}`;
       imageList.push(imageURL);
     });
 

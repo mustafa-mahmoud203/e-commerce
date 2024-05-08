@@ -48,7 +48,7 @@ reviewSchema.statics.calculateAvgRatingAndQuantity = asyncHandler(
         ratingsAverage: review[0].avgRating,
         ratingsQuantity: review[0].quantity,
       });
-    } else {
+    } else {                                          
       await productModel.findByIdAndUpdate(productId, {
         ratingsAverage: 0,
         ratingsQuantity: 0,

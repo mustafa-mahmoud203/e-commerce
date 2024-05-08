@@ -1,5 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
+import cors from "cors";
+import compression from "compression";
 
 import express from "express";
 import "dotenv/config";
@@ -8,16 +10,7 @@ import connectDB from "./dataBase/connection.js";
 import { globalError } from "./src/middleware/errorHandilng.js";
 import ApiError from "./src/utils/apiError.js";
 
-import categoryRouter from "./src/routes/category.route.js";
-import brandsRouter from "./src/routes/brands.route.js";
-import productsRouter from "./src/routes/product.route.js";
-import subCategoryRouter from "./src/routes/subCategory.route.js";
-import usersRouter from "./src/routes/users.route.js";
-import adminUsersRouter from "./src/routes/users(Admin).route.js";
-import authRouter from "./src/routes/auth.route.js";
-import reviewRouter from "./src/routes/review.route.js";
-import favoritesRouter from "./src/routes/favorites.route.js";
-import addressesRouter from "./src/routes/addresses.route.js";
+import indexRoutes from "./src/routes/index.route.js";
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -25,18 +18,17 @@ const port = process.env.PORT || 3001;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 connectDB();
+
 app.use(express.json());
 
-app.use("/categories", categoryRouter);
-app.use("/subCategories", subCategoryRouter);
-app.use("/brands", brandsRouter);
-app.use("/products", productsRouter);
-app.use("/admin/users", adminUsersRouter);
-app.use("/users", usersRouter);
-app.use("/reviews", reviewRouter);
-app.use("/favorites", favoritesRouter);
-app.use("/addresses", addressesRouter);
-app.use("/", authRouter);
+app.use(cors());
+app.options("*", cors());
+
+app.use(compression());
+
+// All app routes
+indexRoutes(app);
+
 app.use("/uploads", express.static(path.join(__dirname, "./src/uploads")));
 app.use("*", (res, req, next) => {
   return next(new ApiError("404 Page Not Found", 404));
