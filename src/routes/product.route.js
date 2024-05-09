@@ -12,7 +12,7 @@ router
   .route("/")
   .post(
     auth,
-    isAllowedTo("admin", "manger"),
+    // isAllowedTo("admin", "manger"),
     fileUploads(filesValidation.image, "products").fields([
       { name: "image", maxCount: 1 },
       { name: "images", maxCount: 8 },
