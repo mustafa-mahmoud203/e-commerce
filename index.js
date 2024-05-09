@@ -12,6 +12,8 @@ import ApiError from "./src/utils/apiError.js";
 
 import indexRoutes from "./src/routes/index.route.js";
 
+import { stripeCheckOutWebHook } from "./src/controllers/order.js";
+
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -25,6 +27,14 @@ app.use(cors());
 app.options("*", cors());
 
 app.use(compression());
+
+
+// stripe check out webhook route
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  stripeCheckOutWebHook
+);
 
 // All app routes
 indexRoutes(app);
