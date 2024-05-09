@@ -18,6 +18,7 @@ export const addProductToCart = asyncHandler(async (req, res, next) => {
 
   let cart = await cartModel.findOne({ user: req.user._id });
   const product = await productModel.findById(productId);
+  if (!product) return next(new ApiError("product not found", 404));
 
   if (cart) {
     // get product if product exist in cart to modify quantity
