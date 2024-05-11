@@ -153,7 +153,7 @@ export const createStripeSession = asyncHandler(async (req, res, next) => {
     ],
     mode: "payment",
     customer_email: req.user.email,
-    client_reference_id: cart._id,
+    client_reference_id: "663ce50ab8b8aaa30e8338fa",
     metadata: req.body.shippingAddress,
     success_url: `${req.protocol}://${req.get("host")}/order`,
     cancel_url: `${req.protocol}://${req.get("host")}/cart`,
