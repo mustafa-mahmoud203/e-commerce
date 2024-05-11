@@ -173,10 +173,11 @@ const createCartOrder = async (session) => {
   console.log("test1");
 
   // 2) check if user and card is found
+  if (!cartId) return next(new ApiError("cart not found", 404));
   const cart = await cartModel.findById(cartId);
-  if (!cart) return next(new ApiError("cart not found", 404));
+
+  if (!userEmail) return next(new ApiError("user not found", 404));
   const user = await userModel.findOne({ email: userEmail });
-  if (!user) return next(new ApiError("user not found", 404));
   console.log("test2");
 
   // 3) Create order with default paymentMethodType card
@@ -207,7 +208,6 @@ const createCartOrder = async (session) => {
     await cartModel.findByIdAndDelete(cartId);
 
     console.log("test5");
-
   }
 };
 
