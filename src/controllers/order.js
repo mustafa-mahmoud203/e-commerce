@@ -164,21 +164,18 @@ export const createStripeSession = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ message: "create stripe session successfuly", data: session });
 });
-const createCartOrder = async (session) => {
+const createCartOrder = async (session, next) => {
   // 1) get cart and user data from session
   const cartId = session.client_reference_id;
   const userEmail = session.customer_email;
   const totalPrice = session.amount_total / 100;
   const shippingAddress = session.metadata;
-  console.log("test1");
 
   // 2) check if user and card is found
-  if (!cartId) return next(new ApiError("cart not found", 404));
   const cart = await cartModel.findById(cartId);
-
-  if (!userEmail) return next(new ApiError("user not found", 404));
+  if (!cart) return next(new ApiError("cart not found", 404));
   const user = await userModel.findOne({ email: userEmail });
-  console.log("test2");
+  if (!user) return next(new ApiError("user not found", 404));
 
   // 3) Create order with default paymentMethodType card
   const order = await orderModel.create({
@@ -190,7 +187,6 @@ const createCartOrder = async (session) => {
     isPaid: true,
     paidAt: Date.now(),
   });
-  console.log("test3");
 
   // 4) After creating order, decrement product quantity, increment product sold
   if (order) {
@@ -202,16 +198,12 @@ const createCartOrder = async (session) => {
     }));
     await productModel.bulkWrite(bulkOption, {});
 
-    console.log("test4");
-
     // 5) Clear cart depend on cartId
     await cartModel.findByIdAndDelete(cartId);
-
-    console.log("test5");
   }
 };
 
-export const stripeCheckOutWebHook = (req, res) => {
+export const stripeCheckOutWebHook = (req, res, next) => {
   console.log("webhook");
   const sig = req.headers["stripe-signature"];
   let event;
@@ -228,7 +220,7 @@ export const stripeCheckOutWebHook = (req, res) => {
 
   // Handle the event
   if (event.type == "checkout.session.completed")
-    createCartOrder(event.data.object);
+    createCartOrder(event.data.object, next);
 
   return res.status(200).json({ message: "success", received: true });
 };
