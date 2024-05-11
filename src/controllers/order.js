@@ -174,9 +174,9 @@ const createCartOrder = async (session, next) => {
 
   // 2) check if user and card is found
   const cart = await cartModel.findById(cartId);
-  if (!cart) throw new Error("cart not found");
+  if (!cart) return next(new ApiError("cart not found", 404));
   const user = await userModel.findOne({ email: userEmail });
-  if (!user) throw new Error("user not found");
+  if (!user) return next(new ApiError("user not found", 404));
 
   // 3) Create order with default paymentMethodType card
   const order = await orderModel.create({
