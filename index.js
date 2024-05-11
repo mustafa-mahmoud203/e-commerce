@@ -21,13 +21,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 connectDB();
 
-app.use(express.json());
-
 app.use(cors());
 app.options("*", cors());
-
 app.use(compression());
-
 
 // stripe check out webhook route
 app.post(
@@ -35,6 +31,8 @@ app.post(
   express.raw({ type: "application/json" }),
   stripeCheckOutWebHook
 );
+
+app.use(express.json());
 
 // All app routes
 indexRoutes(app);

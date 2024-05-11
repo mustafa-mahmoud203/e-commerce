@@ -165,9 +165,8 @@ export const createStripeSession = asyncHandler(async (req, res, next) => {
 });
 
 export const stripeCheckOutWebHook = (req, res) => {
-  console.log("WWWWWWWWWWEEEEEEEEEEEEEEEEEEBBBBBBBBBBBBB");
+  console.log("webhook");
   const sig = req.headers["stripe-signature"];
-  console.log("sig", sig);
   let event;
 
   try {
@@ -177,7 +176,6 @@ export const stripeCheckOutWebHook = (req, res) => {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    console.log("err", err);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
