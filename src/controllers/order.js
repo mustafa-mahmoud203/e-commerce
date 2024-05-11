@@ -170,16 +170,13 @@ const createCartOrder = async (session, res, next) => {
   const userEmail = session.customer_email;
   const totalPrice = session.amount_total / 100;
   const shippingAddress = session.metadata;
-  console.log("test1", session.client_reference_id);
 
   // 2) check if user and card is found
   const cart = await cartModel.findById(cartId);
   if (!cart) return next(new ApiError("cart not found", 404));
-  console.log("test2");
 
   const user = await userModel.findOne({ email: userEmail });
   if (!user) return next(new ApiError("user not found", 404));
-  console.log("test3");
 
   // 3) Create order with default paymentMethodType card
   const order = await orderModel.create({
@@ -191,7 +188,6 @@ const createCartOrder = async (session, res, next) => {
     isPaid: true,
     paidAt: Date.now(),
   });
-  console.log("test4");
 
   // 4) After creating order, decrement product quantity, increment product sold
   if (order) {
@@ -204,15 +200,11 @@ const createCartOrder = async (session, res, next) => {
     await productModel.bulkWrite(bulkOption, {});
 
     // 5) Clear cart depend on cartId
-    const carttt = await cartModel.findByIdAndDelete(cartId);
+    await cartModel.findByIdAndDelete(cartId);
 
-    console.log("carttt", carttt);
+    return res.status(200).json({ message: "success", received: true });
   }
-  console.log("test5");
-
-  return res.status(200).json({ message: "success", received: true });
 };
-
 export const stripeCheckOutWebHook = asyncHandler((req, res, next) => {
   const sig = req.headers["stripe-signature"];
   let event;
@@ -222,7 +214,6 @@ export const stripeCheckOutWebHook = asyncHandler((req, res, next) => {
     sig,
     process.env.STRIPE_WEBHOOK_SECRET
   );
-  if (event.type == "checkout.session.completed") {
-    createCartOrder(event.data.object, res , next);
-  }
+  if (event.type == "checkout.session.completed")
+    createCartOrder(event.data.object, res, next);
 });
