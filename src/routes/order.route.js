@@ -16,13 +16,21 @@ router.post(
 
 router
   .route("/")
-  .post(isAllowedTo("user", "maneger", "admin"), controllers.createCashOrder)
+  .post(isAllowedTo("user"), controllers.createCashOrder)
   .get(isAllowedTo("user", "maneger", "admin"), controllers.getOrders);
 
 router
   .route("/:orderId")
   .get(isAllowedTo("user"), controllers.getSpecificOrder);
 
-router.patch("/:orderId/paid", controllers.updateOrderPaidStates);
-router.patch("/:orderId/delivered", controllers.updateOrderDeliverdStates);
+router.patch(
+  "/:orderId/paid",
+  isAllowedTo("maneger", "admin"),
+  controllers.updateOrderPaidStates
+);
+router.patch(
+  "/:orderId/delivered",
+  isAllowedTo("maneger", "admin"),
+  controllers.updateOrderDeliverdStates
+);
 export default router;
