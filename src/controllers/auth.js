@@ -27,7 +27,9 @@ export const signup = asyncHandler(async (req, res, next) => {
     email: user.email,
   };
   const token = jwtSign({ payload: payload });
-  res
+
+  console.log(token);
+  return res
     .status(201)
     .json({ message: "Done", result: user.length, data: user, token });
 });
@@ -49,5 +51,5 @@ export const login = asyncHandler(async (req, res, next) => {
     email: user.email,
   };
   const token = jwtSign({ payload: payload });
-  res.status(201).json({ message: "Done", result: user.length, token });
+  return res.status(201).json({ message: "Done", result: user.length, token });
 });
