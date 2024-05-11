@@ -201,6 +201,7 @@ const createCartOrder = async (session, next) => {
 
     // 5) Clear cart depend on cartId
     const carttt = await cartModel.findByIdAndDelete(cartId);
+    return res.status(200).json({ message: "success", received: true });
 
     console.log("carttt", carttt);
   }
@@ -218,6 +219,4 @@ export const stripeCheckOutWebHook = asyncHandler((req, res, next) => {
   if (event.type == "checkout.session.completed") {
     createCartOrder(event.data.object, next);
   }
-
-  return res.status(200).json({ message: "success", received: true });
 });
