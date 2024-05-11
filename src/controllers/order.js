@@ -199,9 +199,9 @@ const createCartOrder = async (session, next) => {
     await productModel.bulkWrite(bulkOption, {});
 
     // 5) Clear cart depend on cartId
-   const carttt= await cartModel.findByIdAndDelete(cartId);
+    const carttt = await cartModel.findByIdAndDelete(cartId);
 
-   console.log(carttt);
+    console.log("carttt", carttt);
   }
 };
 
@@ -223,6 +223,6 @@ export const stripeCheckOutWebHook = (req, res, next) => {
   // Handle the event
   if (event.type == "checkout.session.completed")
     createCartOrder(event.data.object, next);
-  
-   res.status(200).json({ message: "success", received: true });
+
+  res.status(200).json({ message: "success", received: true });
 };
