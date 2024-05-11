@@ -170,7 +170,7 @@ const createCartOrder = async (session, next) => {
   const userEmail = session.customer_email;
   const totalPrice = session.amount_total / 100;
   const shippingAddress = session.metadata;
-  console.log("test1");
+  console.log("test1",session.client_reference_id);
 
   // 2) check if user and card is found
   const cart = await cartModel.findById(cartId);
