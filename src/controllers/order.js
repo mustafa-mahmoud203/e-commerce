@@ -8,6 +8,7 @@ import productModel from "../../dataBase/models/product.model.js";
 import cartModel from "../../dataBase/models/cart.model.js";
 import orderModel from "../../dataBase/models/order.model.js";
 import ApiFeatures from "../utils/apiFeatures.js";
+import userModel from "../../dataBase/models/user.model.js";
 
 export const createCashOrder = asyncHandler(async (req, res, next) => {
   // app settings
@@ -181,8 +182,46 @@ export const stripeCheckOutWebHook = (req, res) => {
 
   // Handle the event
   if (event.type == "checkout.session.completed")
-    console.log("HEEERRRRRRRRRRRRRRRRRRRRRRR");
+    createCartOrder(event.data.object);
 
-  // Return a 200 response to acknowledge receipt of the event
-  // res.send();
+  return res.status(200).json({ message: "success", received: true });
+};
+
+const createCartOrder = async (session) => {
+  // 1) get cart and user data from session
+  const cartId = session.client_reference_id;
+  const userEmail = session.customer_email;
+  const totalPrice = session.amount_total / 100;
+  const shippingAddress = session.metadata;
+
+  // 2) check if user and card is found
+  const cart = await cartModel.findById(cartId);
+  if (!cart) return next(new ApiError("cart not found", 404));
+  const user = await userModel.findOne({ email: userEmail });
+  if (!user) return next(new ApiError("user not found", 404));
+
+  // 3) Create order with default paymentMethodType card
+  const order = await orderModel.create({
+    user: user._id,
+    orderItems: cart.cartItems,
+    totalOrderPrice: totalPrice,
+    shippingAddress,
+    paymentMethodType: "card",
+    isPaid: true,
+    paidAt: Date.now(),
+  });
+
+  // 4) After creating order, decrement product quantity, increment product sold
+  if (order) {
+    const bulkOption = cart.cartItems.map((item) => ({
+      updateOne: {
+        filter: { _id: item.product },
+        update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+      },
+    }));
+    await productModel.bulkWrite(bulkOption, {});
+
+    // 5) Clear cart depend on cartId
+    await cartModel.findByIdAndDelete(cartId);
+  }
 };
