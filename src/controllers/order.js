@@ -159,7 +159,7 @@ export const createStripeSession = asyncHandler(async (req, res, next) => {
     cancel_url: `${req.protocol}://${req.get("host")}/cart`,
   });
 
-  console.log(session.client_reference_id);
+  console.log(session);
   return res
     .status(200)
     .json({ message: "create stripe session successfuly", data: session });
