@@ -164,29 +164,6 @@ export const createStripeSession = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ message: "create stripe session successfuly", data: session });
 });
-
-export const stripeCheckOutWebHook = (req, res) => {
-  console.log("webhook");
-  const sig = req.headers["stripe-signature"];
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (err) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  // Handle the event
-  if (event.type == "checkout.session.completed")
-    createCartOrder(event.data.object);
-
-  return res.status(200).json({ message: "success", received: true });
-};
-
 const createCartOrder = async (session) => {
   // 1) get cart and user data from session
   const cartId = session.client_reference_id;
@@ -224,4 +201,26 @@ const createCartOrder = async (session) => {
     // 5) Clear cart depend on cartId
     await cartModel.findByIdAndDelete(cartId);
   }
+};
+
+export const stripeCheckOutWebHook = (req, res) => {
+  console.log("webhook");
+  const sig = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the event
+  if (event.type == "checkout.session.completed")
+    createCartOrder(event.data.object);
+
+  return res.status(200).json({ message: "success", received: true });
 };
