@@ -225,6 +225,6 @@ export const stripeCheckOutWebHook = (req, res, next) => {
   //   console.log(event.type == "checkout.session.completed");
   //   createCartOrder(event.data.object, next);
   // }
-
-  res.status(200).json({ message: "success", received: true });
+  console.log("saaasasasas");
+  return res.status(200).json({ message: "success", received: true });
 };
