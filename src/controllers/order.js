@@ -165,18 +165,21 @@ export const createStripeSession = asyncHandler(async (req, res, next) => {
     .json({ message: "create stripe session successfuly", data: session });
 });
 const createCartOrder = async (session, next) => {
-  console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
   // 1) get cart and user data from session
   const cartId = session.client_reference_id;
   const userEmail = session.customer_email;
   const totalPrice = session.amount_total / 100;
   const shippingAddress = session.metadata;
+  console.log("test1");
 
   // 2) check if user and card is found
   const cart = await cartModel.findById(cartId);
   if (!cart) return next(new ApiError("cart not found", 404));
+  console.log("test2");
+
   const user = await userModel.findOne({ email: userEmail });
   if (!user) return next(new ApiError("user not found", 404));
+  console.log("test3");
 
   // 3) Create order with default paymentMethodType card
   const order = await orderModel.create({
@@ -188,6 +191,7 @@ const createCartOrder = async (session, next) => {
     isPaid: true,
     paidAt: Date.now(),
   });
+  console.log("test4");
 
   // 4) After creating order, decrement product quantity, increment product sold
   if (order) {
@@ -201,10 +205,13 @@ const createCartOrder = async (session, next) => {
 
     // 5) Clear cart depend on cartId
     const carttt = await cartModel.findByIdAndDelete(cartId);
-    return res.status(200).json({ message: "success", received: true });
-
+   
     console.log("carttt", carttt);
+   
   }
+  console.log("test5");
+
+   return res.status(200).json({ message: "success", received: true });
 };
 
 export const stripeCheckOutWebHook = asyncHandler((req, res, next) => {
