@@ -221,6 +221,6 @@ export const stripeCheckOutWebHook = (req, res, next) => {
   // Handle the event
   if (event.type == "checkout.session.completed")
     createCartOrder(event.data.object, next);
-  console.log("done");
-  return res.status(200).json({ message: "success", received: true });
+  
+   res.status(200).json({ message: "success", received: true });
 };
