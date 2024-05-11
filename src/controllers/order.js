@@ -154,7 +154,7 @@ export const createStripeSession = asyncHandler(async (req, res, next) => {
     ],
     mode: "payment",
     customer_email: req.user.email,
-    client_reference_id: cart._id,
+    client_reference_id: cart._id.toString(),
     metadata: req.body.shippingAddress,
     success_url: `${req.protocol}://${req.get("host")}/order`,
     cancel_url: `${req.protocol}://${req.get("host")}/cart`,
@@ -170,7 +170,7 @@ const createCartOrder = async (session, next) => {
   const userEmail = session.customer_email;
   const totalPrice = session.amount_total / 100;
   const shippingAddress = session.metadata;
-  console.log("test1",session.client_reference_id);
+  console.log("test1", session.client_reference_id);
 
   // 2) check if user and card is found
   const cart = await cartModel.findById(cartId);
@@ -205,13 +205,12 @@ const createCartOrder = async (session, next) => {
 
     // 5) Clear cart depend on cartId
     const carttt = await cartModel.findByIdAndDelete(cartId);
-   
+
     console.log("carttt", carttt);
-   
   }
   console.log("test5");
 
-   return res.status(200).json({ message: "success", received: true });
+  return res.status(200).json({ message: "success", received: true });
 };
 
 export const stripeCheckOutWebHook = asyncHandler((req, res, next) => {
