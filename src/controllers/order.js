@@ -164,7 +164,7 @@ export const createStripeSession = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ message: "create stripe session successfuly", data: session });
 });
-const createCartOrder = async (session, next) => {
+const createCartOrder = async (session, res, next) => {
   // 1) get cart and user data from session
   const cartId = session.client_reference_id;
   const userEmail = session.customer_email;
@@ -223,6 +223,6 @@ export const stripeCheckOutWebHook = asyncHandler((req, res, next) => {
     process.env.STRIPE_WEBHOOK_SECRET
   );
   if (event.type == "checkout.session.completed") {
-    createCartOrder(event.data.object, next);
+    createCartOrder(event.data.object, res , next);
   }
 });
