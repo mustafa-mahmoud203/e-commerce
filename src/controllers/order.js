@@ -166,6 +166,7 @@ export const createStripeSession = asyncHandler(async (req, res, next) => {
 });
 
 export const stripeCheckOutWebHook = (req, res) => {
+  console.log("WWWWWWWWWWEEEEEEEEEEEEEEEEEEBBBBBBBBBBBBB");
   const sig = req.headers["stripe-signature"];
 
   let event;
@@ -181,16 +182,8 @@ export const stripeCheckOutWebHook = (req, res) => {
   }
 
   // Handle the event
-  switch (event.type) {
-    case "checkout.session.completed":
-      const checkoutSessionCompleted = event.data.object;
-      console.log("HEEERRRRRRRRRRRRRRRRRRRRRRR");
-      // Then define and call a function to handle the event checkout.session.completed
-      break;
-
-    default:
-      console.log(`Unhandled event type ${event.type}`);
-  }
+  if (event.type == "checkout.session.completed")
+    console.log("HEEERRRRRRRRRRRRRRRRRRRRRRR");
 
   // Return a 200 response to acknowledge receipt of the event
   // res.send();
