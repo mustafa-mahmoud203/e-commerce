@@ -199,7 +199,9 @@ const createCartOrder = async (session, next) => {
     await productModel.bulkWrite(bulkOption, {});
 
     // 5) Clear cart depend on cartId
-    await cartModel.findByIdAndDelete(cartId);
+   const carttt= await cartModel.findByIdAndDelete(cartId);
+
+   console.log(carttt);
   }
 };
 
