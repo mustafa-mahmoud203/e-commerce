@@ -174,9 +174,9 @@ const createCartOrder = async (session, next) => {
 
   // 2) check if user and card is found
   const cart = await cartModel.findById(cartId);
-  if (!cart) return next(new ApiError("cart not found", 404));
+  if (!cart) throw new ApiError("cart not found", 404);
   const user = await userModel.findOne({ email: userEmail });
-  if (!user) return next(new ApiError("user not found", 404));
+  if (!user) throw new ApiError("user not found", 404);
 
   // 3) Create order with default paymentMethodType card
   const order = await orderModel.create({
@@ -216,12 +216,14 @@ export const stripeCheckOutWebHook = (req, res, next) => {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
+    if (event.type == "checkout.session.completed") {
+      createCartOrder(event.data.object, next);
+    }
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
   // Handle the event
-  if (event.type == "checkout.session.completed") {
-    createCartOrder(event.data.object, next);
-  }
+
+  
   return res.status(200).json({ message: "success", received: true });
 };
