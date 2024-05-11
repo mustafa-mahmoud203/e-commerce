@@ -217,10 +217,10 @@ export const stripeCheckOutWebHook = (req, res, next) => {
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
-
+  console.log("event");
   // Handle the event
   if (event.type == "checkout.session.completed")
     createCartOrder(event.data.object, next);
-
+  console.log("done");
   return res.status(200).json({ message: "success", received: true });
 };
